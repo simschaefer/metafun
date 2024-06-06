@@ -45,7 +45,7 @@ Simulates data of multiple studies using predefined effect sizes and between stu
 ```{r}
 sim <- sim_meta(min_obs = 20,
          max_obs = 2000,
-         n_studies = 20,
+         n_studies = 1500,
          es_true = 0.3,
          es = 'SMD',
          fixed = TRUE,
