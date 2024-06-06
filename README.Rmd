@@ -66,7 +66,8 @@ ggplot(sim$data_aggr, aes(x = hedges_g, y = log(se), color = n_x))+
        y = "log(SE)")+
   scale_color_viridis_c()
 ```
-# Run Meta-Analysis
+
+# Run Meta-Analysis on simulated data
 
 ```{r}
 require(meta)
@@ -88,5 +89,41 @@ summary(metaanalysis)
 ```{r}
 forest(metaanalysis)
 
+```
+# Simulate Random-Effects model
+
+```{r}
+sim <- sim_meta(min_obs = 20,
+         max_obs = 2000,
+         n_studies = 1500,
+         es_true = 0.7,
+         es = 'SMD',
+         fixed = FALSE,
+         random = TRUE,
+         tau = 0.05,
+         varnames = c('x', 'y'))
+
+head(sim$data_aggr)
+```
+
+Run Random-Effects Meta-Analysis
+
+```{r}
+require(meta)
+
+metaanalysis <- metagen(TE = hedges_g,
+                 seTE = se,
+                 studlab = study,
+                 data = sim$data_aggr %>% filter(study <= 10),
+                 sm = "SMD",
+                 fixed = FALSE,
+                 random = TRUE,
+                 method.tau = 'PM',
+                 method.random.ci = "HK",
+                 title = "Meta-Analysis fixed-effect")
+
+summary(metaanalysis)
+
+forest(metaanalysis)
 ```
 
