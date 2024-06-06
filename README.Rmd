@@ -45,8 +45,8 @@ Simulates data of multiple studies using predefined effect sizes and between stu
 ```{r}
 sim <- sim_meta(min_obs = 20,
          max_obs = 2000,
-         n_studies = 1500,
-         es_true = 0.7,
+         n_studies = 20,
+         es_true = 0.3,
          es = 'SMD',
          fixed = TRUE,
          random = FALSE,
@@ -110,6 +110,7 @@ Run Random-Effects Meta-Analysis
 
 ```{r}
 require(meta)
+require(metafor)
 
 metaanalysis <- metagen(TE = hedges_g,
                  seTE = se,
@@ -124,6 +125,6 @@ metaanalysis <- metagen(TE = hedges_g,
 
 summary(metaanalysis)
 
-forest(metaanalysis)
+metafor::forest(metaanalysis, header = TRUE)
 ```
 
