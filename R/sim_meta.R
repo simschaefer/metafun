@@ -16,6 +16,7 @@
 #' @importFrom metafor escalc
 #' @importFrom faux rnorm_multi
 #' @importFrom dplyr summarise bind_rows group_by %>% mutate sym tibble rename
+#' @importFrom stats cor rnorm sd setNames
 #' @examples
 #' sim_meta(min_obs = 100, max_obs = 500, n_studies = 20, es_true = 0.7)
 #'
@@ -116,7 +117,7 @@ sim_meta <- function(min_obs,
       summarise(r = cor(!!sym(varnames[1]),
                         !!sym(varnames[2])),
                 z = fisherz(r),
-                n = length(laser),
+                n = length(!!sym(varnames[1])),
                 se = 1/sqrt(n-3))
     }
 

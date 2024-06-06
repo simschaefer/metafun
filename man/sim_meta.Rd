@@ -23,7 +23,7 @@ sim_meta(
 
 \item{n_studies}{number of studies}
 
-\item{es_true}{true effect size $\theta$}
+\item{es_true}{true effect size}
 
 \item{es}{type of effect size (choose 'SMD' fpr standardized mean difference and 'ZCOR' for correlations)}
 
