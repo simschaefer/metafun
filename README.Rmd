@@ -38,7 +38,7 @@ library(metafun)
 ## basic example code
 ```
 
-## sim_meta
+## Simulate Fixed-Effects model
 
 Simulates data of multiple studies using predefined effect sizes and between study heterogenity ($\tau$).
 
