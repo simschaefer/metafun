@@ -14,8 +14,7 @@
 #' @export
 #' @importFrom psych fisherz
 #' @importFrom metafor escalc
-#' @importFrom dplyr summarise bind_rows group_by
-#'
+#' @importFrom dplyr summarise bind_rows group_by %>% mutate sym tibble rename
 #' @examples
 #' sim_meta(min_obs = 100, max_obs = 500, n_studies = 20, es_true = 0.7)
 #'
