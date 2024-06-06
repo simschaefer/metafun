@@ -52,10 +52,10 @@ sim_meta <- function(min_obs,
         }
 
         data_list[[i]] <- data.frame('x' = rnorm(n,
-                                                     study_mean1, # <- bleibt in jeder Studie gleich!
+                                                     study_mean1,
                                                      1),
                                      'y' = rnorm(n,
-                                                  study_mean2, # <- bleibt in jeder Studie gleich!
+                                                  study_mean2,
                                                   1)) %>%
           mutate(study = i)
 
