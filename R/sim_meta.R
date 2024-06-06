@@ -35,10 +35,10 @@ sim_meta <- function(min_obs,
 
   if(es == 'SMD'){
       # mean Group 1
-      mean1 <- 0
+      mean2 <- 0
 
       # mean Group 2
-      mean2 <- mean1 + es_true
+      mean1 <- mean2 + es_true
 
       for(i in 1:n_studies){
         n <- sample(min_obs:max_obs, 1)

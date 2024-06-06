@@ -43,15 +43,50 @@ library(metafun)
 Simulates data of multiple studies using predefined effect sizes and between study heterogenity ($\tau$).
 
 ```{r}
-df <- sim_meta(min_obs = 200,
-         max_obs = 800,
-         n_studies = 150,
+sim <- sim_meta(min_obs = 20,
+         max_obs = 2000,
+         n_studies = 1500,
          es_true = 0.7,
          es = 'SMD',
          fixed = TRUE,
          random = FALSE,
          varnames = c('x', 'y'))
 
-head(df$data_aggr)
+head(sim$data_aggr)
+```
+# Effect size and standard error
+
+```{r}
+require(tidyverse)
+
+ggplot(sim$data_aggr, aes(x = hedges_g, y = log(se), color = n_x))+
+  geom_point(alpha = 0.5)+
+  theme_minimal()+
+  labs(x = "Effect Size (ES)",
+       y = "log(SE)")+
+  scale_color_viridis_c()
+```
+# Run Meta-Analysis
+
+```{r}
+require(meta)
+
+metaanalysis <- metagen(TE = hedges_g,
+                 seTE = se,
+                 studlab = study,
+                 data = sim$data_aggr %>% filter(study <= 10),
+                 sm = "SMD",
+                 fixed = TRUE,
+                 random = FALSE,
+                 title = "Meta-Analysis fixed-effect")
+
+summary(metaanalysis)
+
+```
+
+# Forest plot
+```{r}
+forest(metaanalysis)
+
 ```
 
