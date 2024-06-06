@@ -1,0 +1,57 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# metafun
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+metafun provides useful functions to teach and understand statistical concept related to Meta-Analyses.
+
+## Installation
+
+You can install the development version of metafun from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("simschaefer/metafun")
+```
+
+## Example
+
+This is a basic example which shows you how to solve a common problem:
+
+```{r example}
+library(metafun)
+## basic example code
+```
+
+## sim_meta
+
+Simulates data of multiple studies using predefined effect sizes and between study heterogenity ($\tau$).
+
+```{r}
+df <- sim_meta(min_obs = 200,
+         max_obs = 800,
+         n_studies = 150,
+         es_true = 0.7,
+         es = 'SMD',
+         fixed = TRUE,
+         random = FALSE,
+         varnames = c('x', 'y'))
+
+head(df$data_aggr)
+```
+

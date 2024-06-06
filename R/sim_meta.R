@@ -15,7 +15,7 @@
 #' @importFrom psych fisherz
 #' @importFrom metafor escalc
 #' @importFrom faux rnorm_multi
-#' @importFrom dplyr summarise bind_rows group_by %>% mutate sym tibble rename
+#' @importFrom dplyr summarise bind_rows group_by %>% mutate sym tibble rename select
 #' @importFrom stats cor rnorm sd setNames
 #' @examples
 #' sim_meta(min_obs = 100, max_obs = 500, n_studies = 20, es_true = 0.7)
@@ -89,7 +89,8 @@ sim_meta <- function(min_obs,
         mutate(se = sqrt(vi)) %>%
         rename(!!!setNames(lookup, new_names)) %>%
         rename(hedges_g = yi) %>%
-        tibble()
+        tibble() %>%
+        select(study, hedges_g,se, everything())
 
   }else if(es == 'ZCOR'){
 
@@ -118,7 +119,8 @@ sim_meta <- function(min_obs,
                         !!sym(varnames[2])),
                 z = fisherz(r),
                 n = length(!!sym(varnames[1])),
-                se = 1/sqrt(n-3))
+                se = 1/sqrt(n-3)) %>%
+      select(study, r,z,n,se, everything())
     }
 
     return_list <- list(data_raw = data_raw,
