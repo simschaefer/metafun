@@ -31,6 +31,10 @@ sim_meta <- function(min_obs,
                      varnames = c('x','y')
                      ){
 
+  if(min_obs > max_obs){
+    warning('Minimum number of observations is lower than maximum. Please adjust `min_obs` and `max_obs`.')
+  }
+
   data_list <- list()
 
   if(es == 'SMD'){
@@ -41,7 +45,14 @@ sim_meta <- function(min_obs,
       mean1 <- mean2 + es_true
 
       for(i in 1:n_studies){
-        n <- sample(min_obs:max_obs, 1)
+
+        if(min_obs < max_obs){
+          n <- sample(min_obs:max_obs, 1)
+        }else if(min_obs == max_obs){
+          n <- min_obs
+        }else{
+          n <- sample(min_obs:max_obs, 1)
+        }
 
         if(random){
           study_mean1 <- rnorm(1, mean = mean1, sd = tau)
@@ -95,7 +106,13 @@ sim_meta <- function(min_obs,
   }else if(es == 'ZCOR'){
 
     for(i in 1:n_studies){
-      n <- sample(min_obs:max_obs, 1)
+      if(min_obs < max_obs){
+        n <- sample(min_obs:max_obs, 1)
+      }else if(min_obs == max_obs){
+        n <- min_obs
+      }else{
+        n <- sample(min_obs:max_obs, 1)
+      }
 
       if(fixed){
         r_true <- es_true
