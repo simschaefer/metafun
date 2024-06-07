@@ -13,7 +13,8 @@ sim_meta(
   fixed = TRUE,
   random = FALSE,
   tau = 0.01,
-  varnames = c("x", "y")
+  varnames = c("x", "y"),
+  n_variance = 0
 )
 }
 \arguments{

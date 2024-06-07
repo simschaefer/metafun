@@ -28,11 +28,20 @@ sim_meta <- function(min_obs,
                      fixed = TRUE,
                      random = FALSE,
                      tau = 0.01,
-                     varnames = c('x','y')
+                     varnames = c('x','y'),
+                     n_variance = 0
                      ){
 
   if(min_obs > max_obs){
     warning('Minimum number of observations is lower than maximum. Please adjust `min_obs` and `max_obs`.')
+  }
+
+  if(fixed & random){
+    message('Both fixed and random were chosen. Only random-effects model is applied.')
+  }
+
+  if(n_variance > 0 & es == 'ZCOR'){
+    message('n_variance is ignored because of within sample effect size.')
   }
 
   data_list <- list()
@@ -62,34 +71,65 @@ sim_meta <- function(min_obs,
           study_mean2 = mean2
         }
 
-        data_list[[i]] <- data.frame('x' = rnorm(n,
+        # different ns for groups
+        n1 <- round(rnorm(1,n,n_variance))
+        n2 <- round(rnorm(1,n,n_variance))
+
+        if(n1 <= 0){
+          stop('n1 <= 0. Please choose smaller variance between groups (`n_variance`)')
+        }
+        if(n2 <= 0){
+          stop('n2 <= 0. Please choose smaller variance between groups (`n_variance`)')
+        }
+
+        data_list[[i]] <- tibble('x' = list(rnorm(n1,
                                                      study_mean1,
-                                                     1),
-                                     'y' = rnorm(n,
+                                                     1)),
+                                     'y' = list(rnorm(n2,
                                                   study_mean2,
-                                                  1)) %>%
+                                                  1))) %>%
           mutate(study = i)
 
         colnames(data_list[[i]]) <- c(varnames, 'study')
       }
 
       data_raw <- data_list %>%
-        bind_rows()
-
-      data_raw <- data_raw %>%
-        group_by(study) %>%
-        summarise(mean1 = mean(!!sym(varnames[1])),
-                  mean2 = mean(!!sym(varnames[2])),
-                  sd1 = sd(!!sym(varnames[1])),
-                  sd2 = sd(!!sym(varnames[2])),
-                  n1 = length(!!sym(varnames[1])),
-                  n2 = length(!!sym(varnames[2])))
+        bind_rows() %>%
+        tibble()
 
       nam <- c("mean", "mean", "sd", "sd", "n", "n")
       lookup <- paste0(nam, c(1,2))
       new_names <- paste0(nam,"_", varnames)
 
-      data_aggr <- escalc(data = data_raw,
+      if(n_variance == 0){
+        data_raw <- data_raw %>%
+          unnest(c(!!sym(varnames[1]), !!sym(varnames[2])))
+
+        # if n1 = n2:
+        data_aggr <- data_raw %>%
+          group_by(study) %>%
+          summarise(mean1 = mean(!!sym(varnames[1])),
+                    mean2 = mean(!!sym(varnames[2])),
+                    sd1 = sd(!!sym(varnames[1])),
+                    sd2 = sd(!!sym(varnames[2])),
+                    n1 = length(!!sym(varnames[1])),
+                    n2 = length(!!sym(varnames[2])))
+
+      }else if(n_variance > 0){
+        # if n1 is not n2:
+        data_aggr <- data_raw %>%
+          group_by(study) %>%
+          summarise(mean1 = map(!!sym(varnames[1]),mean),
+                    mean2 = map(!!sym(varnames[2]),mean),
+                    sd1 = map(!!sym(varnames[1]),sd),
+                    sd2 = map(!!sym(varnames[2]),sd),
+                    n1 = map(!!sym(varnames[1]),length),
+                    n2 = map(!!sym(varnames[2]),length)) %>%
+          unnest(cols = all_of(lookup))
+      }
+
+
+      data_aggr <- escalc(data = data_aggr,
                        measure = 'SMD',
                        m1i = mean1,
                        m2i = mean2,
@@ -128,7 +168,8 @@ sim_meta <- function(min_obs,
     }
 
     data_raw <- data_list %>%
-      bind_rows()
+      bind_rows() %>%
+      tibble()
 
     data_aggr <- data_raw %>%
       group_by(study) %>%
