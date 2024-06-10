@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-metafun provides useful functions to teach and understand statistical concept related to Meta-Analyses.
+'metafun' offers valuable functions for teaching and understanding statistical concepts related to meta-analyses using a simulation-based approach. Please note that this package is currently under development, and full functionality is not yet available.
 
 ## Installation
 
