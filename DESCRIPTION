@@ -1,5 +1,5 @@
 Package: metafun
-Title: Simulation of Meta-Analytic Data Sets.
+Title: Simulate Meta-Analytic Data Sets
 Version: 0.0.0.9000
 Authors@R: 
     person("Simon", "Schaefer", , "Simon.schaefer@uni-mainz.de", role = c("aut", "cre"),

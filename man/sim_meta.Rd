@@ -14,7 +14,11 @@ sim_meta(
   random = FALSE,
   tau = 0.01,
   varnames = c("x", "y"),
-  n_variance = 0
+  n_variance = 0,
+  metaregression = FALSE,
+  mod_varname = c(),
+  mod_labels = c(),
+  mod_effect = NA
 )
 }
 \arguments{
@@ -32,11 +36,19 @@ sim_meta(
 
 \item{random}{simulation based on between study heterogenity (random-effects model)}
 
-\item{tau}{specify standard deviation of between study heterogenity}
+\item{tau}{specify standard deviation of between study heterogenity. If moderator variable specified, tau is the residual heterogenity after including the moderator.}
 
 \item{varnames}{variable names}
 
 \item{n_variance}{variance between n1 and n2. Both sample sizes are drawn from normal distributions using the specified value as standard deviation.}
+
+\item{metaregression}{set TRUE if categorical or continuous moderator should be included.}
+
+\item{mod_varname}{specify the variable name of the moderator}
+
+\item{mod_labels}{specify the labels of different groups of studies, if the moderator is a categorical variable.}
+
+\item{mod_effect}{standardize size of moderation effect for categorical moderator. Provide a vector of multiple effect sizes if moderator variable includes more than two groups.}
 }
 \value{
 list containing raw data (data_raw) and aggregated data with computed effects sizes and standard errors (data_aggr)
@@ -46,5 +58,4 @@ sim_meta
 }
 \examples{
 sim_meta(min_obs = 100, max_obs = 500, n_studies = 20, es_true = 0.7)
-
 }

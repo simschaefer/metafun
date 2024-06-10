@@ -7,10 +7,14 @@
 #' @param es type of effect size (choose 'SMD' fpr standardized mean difference and 'ZCOR' for correlations)
 #' @param fixed simulation based on fixed effects model (TRUE)
 #' @param random simulation based on between study heterogenity (random-effects model)
-#' @param tau specify standard deviation of between study heterogenity
+#' @param tau specify standard deviation of between study heterogenity. If moderator variable specified, tau is the residual heterogenity after including the moderator.
 #' @param varnames variable names
 #' @param n_variance variance between n1 and n2. Both sample sizes are drawn from normal distributions using the specified value as standard deviation.
-#'
+#' @param metaregression set TRUE if categorical or continuous moderator should be included.
+#' @param mod_varname specify the variable name of the moderator
+#' @param mod_labels specify the labels of different groups of studies, if the moderator is a categorical variable.
+#' @param mod_effect standardize size of moderation effect for categorical moderator. Provide a vector of multiple effect sizes if moderator variable includes more than two groups.
+
 #' @return list containing raw data (data_raw) and aggregated data with computed effects sizes and standard errors (data_aggr)
 #' @export
 #' @importFrom psych fisherz
@@ -21,7 +25,7 @@
 #' @importFrom stats cor rnorm sd setNames
 #' @examples
 #' sim_meta(min_obs = 100, max_obs = 500, n_studies = 20, es_true = 0.7)
-#'
+
 sim_meta <- function(min_obs,
                      max_obs,
                      n_studies,
@@ -31,8 +35,24 @@ sim_meta <- function(min_obs,
                      random = FALSE,
                      tau = 0.01,
                      varnames = c('x','y'),
-                     n_variance = 0
+                     n_variance = 0,
+                     metaregression = FALSE,
+                     mod_varname = c(),
+                     mod_labels = c(),
+                     mod_effect = NA
                      ){
+
+  if(!metaregression){
+    mod_effect <- 0
+  }
+
+  if(length(mod_labels)-1 > length(mod_effect)){
+    stop('Number of subgroups is higher than number of effect sizes in `mod_effect`.')
+  }else if(length(mod_labels) <= length(mod_effect)){
+    n_effects <- length(mod_effect)
+    n_labels <- length(mod_labels)
+    warning(paste0('Number of moderator labels (',n_labels,') does not match the number of effect sizes (',n_effects,'). Only the first ',n_labels-1,' effect sizes are used.'))
+  }
 
   if(min_obs > max_obs){
     warning('Minimum number of observations is lower than maximum. Please adjust `min_obs` and `max_obs`.')
@@ -92,7 +112,6 @@ sim_meta <- function(min_obs,
                                                   1))) %>%
           mutate(study = i)
 
-        colnames(data_list[[i]]) <- c(varnames, 'study')
       }
 
       data_raw <- data_list %>%
@@ -102,6 +121,11 @@ sim_meta <- function(min_obs,
       nam <- c("mean", "mean", "sd", "sd", "n", "n")
       lookup <- paste0(nam, c(1,2))
       new_names <- paste0(nam,"_", varnames)
+
+      if(metaregression){
+        new_names <- c(new_names, mod_varname)
+        lookup <- c(lookup, 'moderator')
+      }
 
       if(n_variance == 0){
         data_raw <- data_raw %>%
@@ -130,8 +154,32 @@ sim_meta <- function(min_obs,
           unnest(cols = all_of(lookup))
       }
 
+      if(metaregression){
+        data_aggr <- data_aggr %>%
+          mutate(moderator = sample(mod_labels,nrow(data_aggr), replace = TRUE))
 
-      data_aggr <- escalc(data = data_aggr,
+        mod_effects <- c(0, mod_effect)
+
+        for(i in seq_along(mod_labels)){
+          data_aggr <- data_aggr %>%
+            mutate(mean2 = ifelse(moderator == mod_labels[i], mean2 + mod_effects[i], mean2))
+        }
+      }
+
+      # if(metaregression & mod_labels == 'continuous'){
+      #
+      # }
+
+      # data_aggr %>%
+      #   group_by(moderator) %>%
+      #   mutate(mean_diff = mean1 - mean2) %>%
+      #   summarise(mean_diff = mean(mean_diff)) %>%
+      #   mutate(diff = lead(mean_diff),
+      #          diffdiff = mean_diff - diff)
+
+
+      data_aggr <- data_aggr %>%
+        escalc(data = .,
                        measure = 'SMD',
                        m1i = mean1,
                        m2i = mean2,
@@ -143,7 +191,7 @@ sim_meta <- function(min_obs,
         rename(!!!setNames(lookup, new_names)) %>%
         rename(hedges_g = yi) %>%
         tibble() %>%
-        select(study, hedges_g,se, everything())
+        select(study, hedges_g, se, everything())
 
   }else if(es == 'ZCOR'){
 
@@ -180,8 +228,23 @@ sim_meta <- function(min_obs,
                 z = fisherz(r),
                 n = length(!!sym(varnames[1])),
                 se = 1/sqrt(n-3)) %>%
-      select(study, r,z,n,se, everything())
+      select(study, z,n,se, everything())
+
+    if(metaregression){
+      data_aggr <- data_aggr %>%
+        mutate(moderator = sample(mod_labels,nrow(data_aggr), replace = T))
+
+      for(i in seq_along(mod_labels)){
+        data_aggr <- data_aggr %>%
+          mutate(z = ifelse(moderator == mod_labels[i], z + mod_effects[i], z))
+      }
     }
+
+    data_aggr <- data_aggr %>%
+      rename(!!!setNames('moderator', mod_varname)) %>%
+      mutate(r = fisherz2r(z))
+
+  }
 
     return_list <- list(data_raw = data_raw,
                       data_aggr = data_aggr,
@@ -190,4 +253,3 @@ sim_meta <- function(min_obs,
 
     return(return_list)
   }
-
