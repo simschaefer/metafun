@@ -1,10 +1,10 @@
 Package: metafun
-Title: What the Package Does (One Line, Title Case)
+Title: Simulation of Meta-Analytic Data Sets.
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
+    person("Simon", "Schaefer", , "Simon.schaefer@uni-mainz.de", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+Description: 'metafun' facilitates the simulation of meta-analytic data sets using both fixed and random effects models. Users can specify parameters such as effect size and between-study heterogeneity to generate realistic data sets including multiple studies.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -13,4 +13,5 @@ Imports:
     dplyr,
     faux,
     metafor,
-    psych
+    psych,
+    tidyr

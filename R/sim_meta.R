@@ -9,11 +9,13 @@
 #' @param random simulation based on between study heterogenity (random-effects model)
 #' @param tau specify standard deviation of between study heterogenity
 #' @param varnames variable names
+#' @param n_variance variance between n1 and n2. Both sample sizes are drawn from normal distributions using the specified value as standard deviation.
 #'
 #' @return list containing raw data (data_raw) and aggregated data with computed effects sizes and standard errors (data_aggr)
 #' @export
 #' @importFrom psych fisherz
 #' @importFrom metafor escalc
+#' @importFrom tidyr unnest
 #' @importFrom faux rnorm_multi
 #' @importFrom dplyr summarise bind_rows group_by %>% mutate sym tibble rename select
 #' @importFrom stats cor rnorm sd setNames

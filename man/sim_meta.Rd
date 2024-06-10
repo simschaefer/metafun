@@ -35,6 +35,8 @@ sim_meta(
 \item{tau}{specify standard deviation of between study heterogenity}
 
 \item{varnames}{variable names}
+
+\item{n_variance}{variance between n1 and n2. Both sample sizes are drawn from normal distributions using the specified value as standard deviation.}
 }
 \value{
 list containing raw data (data_raw) and aggregated data with computed effects sizes and standard errors (data_aggr)
