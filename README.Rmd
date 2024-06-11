@@ -253,7 +253,7 @@ head(sim %>%
 
 ### Run Meta-Analysis on simulated data
 
-```{r fig.width=10, fig.height=5, message=FALSE}
+```{r fig.width=10, fig.height=8, message=FALSE}
 meta_random <- metagen(TE = hedges_g,
                  seTE = se,
                  studlab = study,
