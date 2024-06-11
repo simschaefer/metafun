@@ -70,24 +70,27 @@ ggplot(sim, aes(x = hedges_g, y = log(se), color = n_x))+
 ```{r message=FALSE}
 require(meta)
 
-metaanalysis <- metagen(TE = hedges_g,
+# choose only studies 1-10 for better readability
+analysis_data <- sim %>% 
+  filter(study <= 10)
+
+meta_fixed <- metagen(TE = hedges_g,
                  seTE = se,
                  studlab = study,
-                 data = sim %>% filter(study <= 10),
+                 data = analysis_data,
                  sm = "SMD",
                  fixed = TRUE,
                  random = FALSE,
-                 title = "Meta-Analysis fixed-effect")
+                 title = "Meta-Analysis Fixed effect")
 
-summary(metaanalysis)
+summary(meta_fixed)
 
 ```
 
 
 ## Forest plot
 ```{r fig.width=10, fig.height=5}
-metafor::forest(metaanalysis,
-             sortvar = TE,
+metafor::forest(meta_fixed,
              prediction = TRUE, 
              print.tau2 = TRUE,
              leftlabs = c("Study", "g", "SE"))
@@ -117,20 +120,27 @@ head(sim)
 require(meta)
 require(metafor)
 
-metaanalysis <- metagen(TE = hedges_g,
+# choose only studies 1-10 for better readability
+analysis_data <- sim %>% 
+  filter(study <= 10)
+
+meta_random <- metagen(TE = hedges_g,
                  seTE = se,
                  studlab = study,
-                 data = sim %>% filter(study <= 10),
+                 data = analysis_data,
                  sm = "SMD",
                  fixed = FALSE,
                  random = TRUE,
                  method.tau = 'PM',
                  method.random.ci = "HK",
-                 title = "Meta-Analysis fixed-effect")
+                 title = "Meta-Analysis Random Effects")
 
-summary(metaanalysis)
+summary(meta_random)
 
 
-metafor::forest(metaanalysis, header = TRUE)
+metafor::forest(meta_random,
+             prediction = TRUE, 
+             print.tau2 = TRUE,
+             leftlabs = c("Study", "g", "SE"))
 ```
 

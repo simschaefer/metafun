@@ -46,14 +46,14 @@ sim <- sim_meta(min_obs = 20,
 
 head(sim)
 #> # A tibble: 6 × 10
-#>   study hedges_g     se   mean_x mean_y  sd_x  sd_y   n_x   n_y      vi
-#>   <int>    <dbl>  <dbl>    <dbl>  <dbl> <dbl> <dbl> <int> <int>   <dbl>
-#> 1     1    0.382 0.0389 -0.0451   0.331 0.988 0.986  1348  1348 0.00151
-#> 2     2    0.308 0.0863 -0.0794   0.227 1.03  0.960   272   272 0.00744
-#> 3     3    0.397 0.0357 -0.00463  0.389 1.00  0.974  1599  1599 0.00128
-#> 4     4    0.263 0.0323  0.0259   0.289 0.987 1.01   1939  1939 0.00104
-#> 5     5    0.344 0.0614 -0.00594  0.331 0.977 0.982   538   538 0.00377
-#> 6     6    0.308 0.0325 -0.0179   0.294 1.01  1.02   1920  1920 0.00105
+#>   study hedges_g     se  mean_x mean_y  sd_x  sd_y   n_x   n_y      vi
+#>   <int>    <dbl>  <dbl>   <dbl>  <dbl> <dbl> <dbl> <int> <int>   <dbl>
+#> 1     1    0.310 0.0434  0.0109  0.316 0.995 0.975  1073  1073 0.00189
+#> 2     2    0.357 0.0447 -0.0363  0.323 1.01  0.999  1019  1019 0.00199
+#> 3     3    0.290 0.0373 -0.0199  0.266 0.992 0.984  1455  1455 0.00139
+#> 4     4    0.275 0.0605  0.0120  0.278 0.983 0.945   552   552 0.00366
+#> 5     5    0.251 0.0561  0.0156  0.277 1.01  1.06    640   640 0.00315
+#> 6     6    0.291 0.0503  0.0121  0.302 0.979 1.01    798   798 0.00253
 ```
 
 ## Effect size and standard error
@@ -76,42 +76,46 @@ ggplot(sim, aes(x = hedges_g, y = log(se), color = n_x))+
 ``` r
 require(meta)
 
-metaanalysis <- metagen(TE = hedges_g,
+# choose only studies 1-10 for better readability
+analysis_data <- sim %>% 
+  filter(study <= 10)
+
+meta_fixed <- metagen(TE = hedges_g,
                  seTE = se,
                  studlab = study,
-                 data = sim %>% filter(study <= 10),
+                 data = analysis_data,
                  sm = "SMD",
                  fixed = TRUE,
                  random = FALSE,
-                 title = "Meta-Analysis fixed-effect")
+                 title = "Meta-Analysis Fixed effect")
 
-summary(metaanalysis)
-#> Review:     Meta-Analysis fixed-effect
+summary(meta_fixed)
+#> Review:     Meta-Analysis Fixed effect
 #> 
-#>       SMD            95%-CI %W(common)
-#> 1  0.3815 [ 0.3053; 0.4577]       10.7
-#> 2  0.3077 [ 0.1387; 0.4768]        2.2
-#> 3  0.3975 [ 0.3275; 0.4675]       12.7
-#> 4  0.2633 [ 0.2000; 0.3265]       15.5
-#> 5  0.3443 [ 0.2239; 0.4647]        4.3
-#> 6  0.3077 [ 0.2440; 0.3713]       15.3
-#> 7  0.3610 [ 0.2931; 0.4289]       13.4
-#> 8  0.3058 [ 0.2395; 0.3721]       14.1
-#> 9  0.3435 [ 0.2638; 0.4231]        9.8
-#> 10 0.1305 [-0.0425; 0.3036]        2.1
+#>       SMD           95%-CI %W(common)
+#> 1  0.3096 [0.2245; 0.3948]       11.1
+#> 2  0.3571 [0.2696; 0.4447]       10.5
+#> 3  0.2896 [0.2165; 0.3626]       15.1
+#> 4  0.2752 [0.1567; 0.3937]        5.7
+#> 5  0.2514 [0.1414; 0.3614]        6.7
+#> 6  0.2912 [0.1925; 0.3898]        8.3
+#> 7  0.4333 [0.2904; 0.5762]        4.0
+#> 8  0.3126 [0.2341; 0.3910]       13.1
+#> 9  0.2299 [0.1521; 0.3077]       13.4
+#> 10 0.2298 [0.1478; 0.3119]       12.0
 #> 
 #> Number of studies: k = 10
 #> 
 #>                        SMD           95%-CI     z  p-value
-#> Common effect model 0.3283 [0.3034; 0.3532] 25.85 < 0.0001
+#> Common effect model 0.2893 [0.2608; 0.3177] 19.95 < 0.0001
 #> 
 #> Quantifying heterogeneity:
-#>  tau^2 = 0.0012 [0.0000; 0.0141]; tau = 0.0346 [0.0000; 0.1185]
-#>  I^2 = 46.1% [0.0%; 74.1%]; H = 1.36 [1.00; 1.96]
+#>  tau^2 = 0.0004 [0.0000; 0.0091]; tau = 0.0192 [0.0000; 0.0954]
+#>  I^2 = 22.0% [0.0%; 61.8%]; H = 1.13 [1.00; 1.62]
 #> 
 #> Test of heterogeneity:
 #>      Q d.f. p-value
-#>  16.71    9  0.0535
+#>  11.54    9  0.2407
 #> 
 #> Details on meta-analytical method:
 #> - Inverse variance method
@@ -122,8 +126,7 @@ summary(metaanalysis)
 ## Forest plot
 
 ``` r
-metafor::forest(metaanalysis,
-             sortvar = TE,
+metafor::forest(meta_fixed,
              prediction = TRUE, 
              print.tau2 = TRUE,
              leftlabs = c("Study", "g", "SE"))
@@ -146,14 +149,14 @@ sim <- sim_meta(min_obs = 20,
 
 head(sim)
 #> # A tibble: 6 × 10
-#>   study hedges_g     se  mean_x mean_y  sd_x  sd_y   n_x   n_y      vi
-#>   <int>    <dbl>  <dbl>   <dbl>  <dbl> <dbl> <dbl> <int> <int>   <dbl>
-#> 1     1    1.07  0.276  -0.291   0.716 0.963 0.900    30    30 0.0762 
-#> 2     2    0.702 0.0717 -0.0610  0.647 0.954 1.06    413   413 0.00514
-#> 3     3    0.611 0.103  -0.0405  0.578 0.996 1.02    199   199 0.0105 
-#> 4     4    0.690 0.106   0.0294  0.699 0.947 0.990   188   188 0.0113 
-#> 5     5    0.613 0.0394  0.0427  0.670 1.04  1.00   1347  1347 0.00155
-#> 6     6    0.793 0.108  -0.180   0.628 1.05  0.982   186   186 0.0116
+#>   study hedges_g     se   mean_x mean_y  sd_x  sd_y   n_x   n_y      vi
+#>   <int>    <dbl>  <dbl>    <dbl>  <dbl> <dbl> <dbl> <int> <int>   <dbl>
+#> 1     1    0.723 0.0359  0.00427  0.740 1.00  1.03   1652  1652 0.00129
+#> 2     2    0.681 0.0600 -0.0229   0.677 1.04  1.01    588   588 0.00360
+#> 3     3    0.667 0.0375 -0.0307   0.641 1.01  1.01   1501  1501 0.00141
+#> 4     4    0.626 0.0463  0.0892   0.722 0.978 1.04    978   978 0.00215
+#> 5     5    0.733 0.0345 -0.0226   0.721 1.01  1.01   1794  1794 0.00119
+#> 6     6    0.647 0.0380  0.0534   0.696 0.991 0.995  1459  1459 0.00144
 ```
 
 ## Run Meta-Analysis on simulated data
@@ -162,44 +165,48 @@ head(sim)
 require(meta)
 require(metafor)
 
-metaanalysis <- metagen(TE = hedges_g,
+# choose only studies 1-10 for better readability
+analysis_data <- sim %>% 
+  filter(study <= 10)
+
+meta_random <- metagen(TE = hedges_g,
                  seTE = se,
                  studlab = study,
-                 data = sim %>% filter(study <= 10),
+                 data = analysis_data,
                  sm = "SMD",
                  fixed = FALSE,
                  random = TRUE,
                  method.tau = 'PM',
                  method.random.ci = "HK",
-                 title = "Meta-Analysis fixed-effect")
+                 title = "Meta-Analysis Random Effects")
 
-summary(metaanalysis)
-#> Review:     Meta-Analysis fixed-effect
+summary(meta_random)
+#> Review:     Meta-Analysis Random Effects
 #> 
 #>       SMD           95%-CI %W(random)
-#> 1  1.0669 [0.5260; 1.6077]        1.0
-#> 2  0.7017 [0.5612; 0.8422]        9.5
-#> 3  0.6111 [0.4101; 0.8121]        5.8
-#> 4  0.6901 [0.4820; 0.8982]        5.5
-#> 5  0.6131 [0.5358; 0.6904]       16.8
-#> 6  0.7933 [0.5823; 1.0044]        5.3
-#> 7  0.7869 [0.7208; 0.8531]       18.4
-#> 8  0.7747 [0.5562; 0.9932]        5.0
-#> 9  0.6445 [0.5558; 0.7332]       15.2
-#> 10 0.7968 [0.7242; 0.8694]       17.5
+#> 1  0.7234 [0.6530; 0.7938]       11.8
+#> 2  0.6814 [0.5638; 0.7990]        7.8
+#> 3  0.6674 [0.5939; 0.7409]       11.5
+#> 4  0.6258 [0.5350; 0.7165]        9.9
+#> 5  0.7330 [0.6654; 0.8006]       12.1
+#> 6  0.6468 [0.5724; 0.7213]       11.4
+#> 7  0.7312 [0.6511; 0.8114]       10.9
+#> 8  0.7621 [0.6658; 0.8585]        9.4
+#> 9  0.4758 [0.2563; 0.6953]        3.3
+#> 10 0.8058 [0.7364; 0.8752]       11.9
 #> 
 #> Number of studies: k = 10
 #> 
 #>                              SMD           95%-CI     t  p-value
-#> Random effects model (HK) 0.7168 [0.6536; 0.7800] 25.65 < 0.0001
+#> Random effects model (HK) 0.7025 [0.6509; 0.7541] 30.79 < 0.0001
 #> 
 #> Quantifying heterogeneity:
-#>  tau^2 = 0.0031 [0.0003; 0.0268]; tau = 0.0558 [0.0168; 0.1638]
-#>  I^2 = 58.9% [17.4%; 79.6%]; H = 1.56 [1.10; 2.21]
+#>  tau^2 = 0.0031 [0.0002; 0.0209]; tau = 0.0559 [0.0156; 0.1444]
+#>  I^2 = 57.7% [14.6%; 79.0%]; H = 1.54 [1.08; 2.18]
 #> 
 #> Test of heterogeneity:
 #>      Q d.f. p-value
-#>  21.91    9  0.0092
+#>  21.27    9  0.0115
 #> 
 #> Details on meta-analytical method:
 #> - Inverse variance method
@@ -208,7 +215,10 @@ summary(metaanalysis)
 #> - Hartung-Knapp adjustment for random effects model (df = 9)
 
 
-metafor::forest(metaanalysis, header = TRUE)
+metafor::forest(meta_random,
+             prediction = TRUE, 
+             print.tau2 = TRUE,
+             leftlabs = c("Study", "g", "SE"))
 ```
 
 <img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
