@@ -48,8 +48,8 @@ sim <- sim_meta(min_obs = 20,
          n_studies = 1500,
          smd_true = 0.3,
          r_true = 0,
-         es = 'SMD',
-         random = FALSE)
+         random = FALSE,
+         metaregression = FALSE)
 
 head(sim)
 ```
@@ -59,7 +59,7 @@ head(sim)
 ```{r message=FALSE}
 require(tidyverse)
 
-ggplot(sim, aes(x = hedges_g, y = log(se), color = n_x))+
+ggplot(sim, aes(x = hedges_g, y = log(se_g), color = n1))+
   geom_point(alpha = 0.5)+
   theme_minimal()+
   labs(x = "Effect Size (ES)",
@@ -77,7 +77,7 @@ sim <- sim %>%
   filter(study <= 10)
 
 meta_fixed <- metagen(TE = hedges_g,
-                 seTE = se,
+                 seTE = se_g,
                  studlab = study,
                  data = sim,
                  sm = "SMD",
@@ -109,8 +109,8 @@ sim <- sim_meta(min_obs = 200,
          max_obs = 2000,
          n_studies = 10,
          smd_true = 0.7,
-         es = 'SMD',
          random = TRUE,
+         random_effects = c('SMD'),
          tau = 0.05)
 
 head(sim)
@@ -123,7 +123,7 @@ require(meta)
 require(metafor)
 
 meta_random <- metagen(TE = hedges_g,
-                 seTE = se,
+                 seTE = se_g,
                  studlab = study,
                  data = sim,
                  sm = "SMD",
@@ -156,7 +156,6 @@ sim <- sim_meta(min_obs = 200,
          n_studies = 10,
          smd_true = 0,
          r_true = 0.5,
-         es = 'ZCOR',
          random = FALSE)
 
 head(sim)
@@ -167,7 +166,7 @@ head(sim)
 require(meta)
 
 meta_fixed <- metagen(TE = z,
-                 seTE = se,
+                 seTE = se_z,
                  studlab = study,
                  data = sim,
                  sm = "ZCOR",
@@ -198,8 +197,8 @@ sim <- sim_meta(min_obs = 200,
          n_studies = 10,
          smd_true = 0,
          r_true = 0.5,
-         es = 'ZCOR',
          random = TRUE,
+         random_effects = c('ZCOR'),
          tau = 0.1)
 
 head(sim)
@@ -210,7 +209,7 @@ head(sim)
 ```{r fig.width=10, fig.height=5, message=FALSE}
 
 meta_random <- metagen(TE = z,
-                 seTE = se,
+                 seTE = se_z,
                  studlab = study,
                  data = sim,
                  sm = "ZCOR",
@@ -239,23 +238,23 @@ sim <- sim_meta(min_obs = 200,
          n_studies = 30,
          smd_true = 0.2,
          r_true = 0,
-         es = 'SMD',
          random = TRUE,
          tau = 0.1,
+         random_effects = c('SMD'),
          metaregression = TRUE,
-         mod_varname = c('subgroup'),
-         mod_labels = c('group1', 'group2', 'group3'),
-         mod_effect = c(0.2, 0.4))
+         smd_mod_effects = c(0.1,0.2,0.3),
+         r_mod_effects = c(0,0,0),
+         mod_labels = c('group1', 'group2', 'group3'))
 
 head(sim %>% 
-       select(study, hedges_g, subgroup, everything()))
+       select(study, hedges_g, subgroups, everything()))
 ```
 
 ### Run Meta-Analysis on simulated data
 
 ```{r fig.width=10, fig.height=12, message=FALSE}
 meta_random <- metagen(TE = hedges_g,
-                 seTE = se,
+                 seTE = se_g,
                  studlab = study,
                  data = sim,
                  sm = "SMD",
@@ -263,7 +262,7 @@ meta_random <- metagen(TE = hedges_g,
                  random = TRUE,
                  method.tau = 'REML',
                  method.random.ci = "HK",
-                 subgroup = subgroup,
+                 subgroup = subgroups,
                  title = "Meta-Analysis Random Effects")
 
 summary(meta_random)

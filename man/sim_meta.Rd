@@ -10,17 +10,16 @@ sim_meta(
   n_studies = 100,
   smd_true = 0.5,
   r_true = 0,
-  es = "SMD",
   sd1 = 1,
   sd2 = 1,
   random = FALSE,
   tau = 0.01,
-  varnames = c("x", "y"),
   metaregression = FALSE,
-  mod_varname = c(),
   mod_labels = c(),
-  mod_effects = NA,
-  aggregate = TRUE
+  smd_mod_effects = c(),
+  r_mod_effects = c(),
+  aggregate = TRUE,
+  random_effects = c()
 )
 }
 \arguments{
@@ -34,8 +33,6 @@ sim_meta(
 
 \item{r_true}{correlation between x and y. Has to be specified if effect size is with-groups (correlation/ pre-post mean difference)}
 
-\item{es}{type of effect size (choose 'SMD' fpr standardized mean difference and 'ZCOR' for correlations)}
-
 \item{sd1}{standard deviation of x}
 
 \item{sd2}{standard deviation of y}
@@ -44,17 +41,17 @@ sim_meta(
 
 \item{tau}{specify standard deviation of between study heterogenity. If moderator variable specified, tau is the residual heterogenity after including the moderator.}
 
-\item{varnames}{variable names (default: x and y)}
-
 \item{metaregression}{set TRUE if categorical moderator should be included.}
-
-\item{mod_varname}{specify the variable name of the moderator}
 
 \item{mod_labels}{labels of different subgroups of studies, if the moderator is a categorical variable.}
 
-\item{mod_effects}{effect sizes in subgroups. Provide a vector of multiple effect sizes if moderator variable includes more than one group.}
+\item{smd_mod_effects}{effect sizes in subgroups. Provide a vector of multiple effect sizes if moderator variable includes more than one group.}
+
+\item{r_mod_effects}{effect on correlation in each subgroup.}
 
 \item{aggregate}{return only aggregated data (TRUE) or raw data (FALSE).}
+
+\item{random_effects}{Choose if 'SMD' or 'ZCOR' should be include random effects}
 }
 \value{
 list containing raw data (data_raw) and aggregated data with computed effects sizes and standard errors (data_aggr)
