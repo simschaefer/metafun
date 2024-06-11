@@ -85,8 +85,12 @@ summary(metaanalysis)
 ```
 
 # Forest plot
-```{r}
-forest(metaanalysis)
+```{r fig.width=10, fig.height=5}
+metafor::forest(metaanalysis,
+             sortvar = TE,
+             prediction = TRUE, 
+             print.tau2 = TRUE,
+             leftlabs = c("Study", "g", "SE"))
 
 ```
 # Simulate Random-Effects model
@@ -105,7 +109,7 @@ head(sim)
 
 Run Random-Effects Meta-Analysis
 
-```{r}
+```{r fig.width=10, fig.height=5}
 require(meta)
 require(metafor)
 
