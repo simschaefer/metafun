@@ -251,7 +251,7 @@ sim_meta <- function(min_obs = 100,
 
       if(metaregression){
         data_aggr <- data_aggr %>%
-          mutate(moderator = sample(mod_labels,nrow(data_aggr), replace = T))
+          mutate(moderator = sample(mod_labels,nrow(data_aggr), replace = TRUE))
 
       mod_effects <- c(0, mod_effect)
 

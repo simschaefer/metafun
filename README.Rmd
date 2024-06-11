@@ -236,16 +236,16 @@ metafor::forest(meta_random,
 ```{r}
 sim <- sim_meta(min_obs = 200,
          max_obs = 2000,
-         n_studies = 15,
-         smd_true = 0.6,
+         n_studies = 30,
+         smd_true = 0.2,
          r_true = 0,
          es = 'SMD',
          random = TRUE,
          tau = 0.1,
          metaregression = TRUE,
          mod_varname = c('subgroup'),
-         mod_labels = c('group1', 'group2'),
-         mod_effect = 0.2)
+         mod_labels = c('group1', 'group2', 'group3'),
+         mod_effect = c(0.2, 0.4))
 
 head(sim %>% 
        select(study, hedges_g, subgroup, everything()))
@@ -253,7 +253,7 @@ head(sim %>%
 
 ### Run Meta-Analysis on simulated data
 
-```{r fig.width=10, fig.height=8, message=FALSE}
+```{r fig.width=10, fig.height=12, message=FALSE}
 meta_random <- metagen(TE = hedges_g,
                  seTE = se,
                  studlab = study,
