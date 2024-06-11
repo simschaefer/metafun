@@ -19,7 +19,7 @@ sim_meta(
   metaregression = FALSE,
   mod_varname = c(),
   mod_labels = c(),
-  mod_effect = NA,
+  mod_effects = NA,
   aggregate = TRUE
 )
 }
@@ -52,7 +52,7 @@ sim_meta(
 
 \item{mod_labels}{labels of different subgroups of studies, if the moderator is a categorical variable.}
 
-\item{mod_effect}{standardize size of moderation effect for categorical moderator. Provide a vector of multiple effect sizes if moderator variable includes more than two groups.}
+\item{mod_effects}{effect sizes in subgroups. Provide a vector of multiple effect sizes if moderator variable includes more than one group.}
 
 \item{aggregate}{return only aggregated data (TRUE) or raw data (FALSE).}
 }
