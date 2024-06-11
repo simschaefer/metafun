@@ -18,7 +18,8 @@ sim_meta(
   metaregression = FALSE,
   mod_varname = c(),
   mod_labels = c(),
-  mod_effect = NA
+  mod_effect = NA,
+  aggregate = TRUE
 )
 }
 \arguments{
@@ -49,6 +50,8 @@ sim_meta(
 \item{mod_labels}{specify the labels of different groups of studies, if the moderator is a categorical variable.}
 
 \item{mod_effect}{standardize size of moderation effect for categorical moderator. Provide a vector of multiple effect sizes if moderator variable includes more than two groups.}
+
+\item{aggregate}{return only aggregated data (TRUE) or list containing raw data (FALSE).}
 }
 \value{
 list containing raw data (data_raw) and aggregated data with computed effects sizes and standard errors (data_aggr)

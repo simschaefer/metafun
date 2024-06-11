@@ -14,7 +14,8 @@
 #' @param mod_varname specify the variable name of the moderator
 #' @param mod_labels specify the labels of different groups of studies, if the moderator is a categorical variable.
 #' @param mod_effect standardize size of moderation effect for categorical moderator. Provide a vector of multiple effect sizes if moderator variable includes more than two groups.
-
+#' @param aggregate return only aggregated data (TRUE) or list containing raw data (FALSE).
+#'
 #' @return list containing raw data (data_raw) and aggregated data with computed effects sizes and standard errors (data_aggr)
 #' @export
 #' @importFrom psych fisherz
@@ -22,6 +23,7 @@
 #' @importFrom tidyr unnest
 #' @importFrom faux rnorm_multi
 #' @importFrom dplyr summarise bind_rows group_by %>% mutate sym tibble rename select
+#' @importFrom purrr map
 #' @importFrom stats cor rnorm sd setNames
 #' @examples
 #' sim_meta(min_obs = 100, max_obs = 500, n_studies = 20, es_true = 0.7)
@@ -39,19 +41,30 @@ sim_meta <- function(min_obs,
                      metaregression = FALSE,
                      mod_varname = c(),
                      mod_labels = c(),
-                     mod_effect = NA
+                     mod_effect = NA,
+                     aggregate = TRUE
                      ){
 
   if(!metaregression){
     mod_effect <- 0
+  }else{
+    if(length(mod_labels)-1 > length(mod_effect)){
+      stop('Number of subgroups is higher than number of effect sizes in `mod_effect`.')
+    }else if(length(mod_labels) <= length(mod_effect)){
+      n_effects <- length(mod_effect)
+      n_labels <- length(mod_labels)
+      warning(paste0('Number of moderator labels (',n_labels,') does not match the number of effect sizes (',n_effects,'). Only the first ',n_labels-1,' effect sizes are used.'))
+    }
   }
 
-  if(length(mod_labels)-1 > length(mod_effect)){
-    stop('Number of subgroups is higher than number of effect sizes in `mod_effect`.')
-  }else if(length(mod_labels) <= length(mod_effect)){
-    n_effects <- length(mod_effect)
-    n_labels <- length(mod_labels)
-    warning(paste0('Number of moderator labels (',n_labels,') does not match the number of effect sizes (',n_effects,'). Only the first ',n_labels-1,' effect sizes are used.'))
+  if(length(varnames) > 2){
+    warning(paste0('Number of variable names is too large (',length(varnames),'). Only the first two names are used.'))
+    varnames <- varnames[1:2]
+  }else if(length(varnames) == 1){
+    warning("You only specified one variable name. The second variable is called 'y'.")
+    varnames <- c(varnames, 'y')
+  }else{
+    varnames <- c('x', 'y')
   }
 
   if(min_obs > max_obs){
@@ -129,29 +142,29 @@ sim_meta <- function(min_obs,
 
       if(n_variance == 0){
         data_raw <- data_raw %>%
-          unnest(c(!!sym(varnames[1]), !!sym(varnames[2])))
+          unnest(c(x, y))
 
         # if n1 = n2:
         data_aggr <- data_raw %>%
           group_by(study) %>%
-          summarise(mean1 = mean(!!sym(varnames[1])),
-                    mean2 = mean(!!sym(varnames[2])),
-                    sd1 = sd(!!sym(varnames[1])),
-                    sd2 = sd(!!sym(varnames[2])),
-                    n1 = length(!!sym(varnames[1])),
-                    n2 = length(!!sym(varnames[2])))
+          summarise(mean1 = mean(x),
+                    mean2 = mean(y),
+                    sd1 = sd(x),
+                    sd2 = sd(y),
+                    n1 = length(x),
+                    n2 = length(y))
 
       }else if(n_variance > 0){
         # if n1 is not n2:
         data_aggr <- data_raw %>%
           group_by(study) %>%
-          summarise(mean1 = map(!!sym(varnames[1]),mean),
-                    mean2 = map(!!sym(varnames[2]),mean),
-                    sd1 = map(!!sym(varnames[1]),sd),
-                    sd2 = map(!!sym(varnames[2]),sd),
-                    n1 = map(!!sym(varnames[1]),length),
-                    n2 = map(!!sym(varnames[2]),length)) %>%
-          unnest(cols = all_of(lookup))
+          summarise(mean1 = map(x,mean),
+                    mean2 = map(y,mean),
+                    sd1 = map(x,sd),
+                    sd2 = map(y,sd),
+                    n1 = map(x,length),
+                    n2 = map(y,length)) %>%
+          unnest(cols = all_of(paste0(nam, c(1,2))))
       }
 
       if(metaregression){
@@ -244,6 +257,8 @@ sim_meta <- function(min_obs,
       rename(!!!setNames('moderator', mod_varname)) %>%
       mutate(r = fisherz2r(z))
 
+  }else{
+    stop("Please specify type of effect size ('ZCOR' or 'SMD').")
   }
 
     return_list <- list(data_raw = data_raw,
@@ -251,5 +266,9 @@ sim_meta <- function(min_obs,
                       es_true = es_true,
                       tau = tau)
 
-    return(return_list)
-  }
+    if(aggregate){
+      return(data_aggr)
+    }else{
+      return(return_list)
+    }
+}
