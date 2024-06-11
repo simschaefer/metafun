@@ -186,7 +186,7 @@ sim_meta <- function(min_obs = 100,
 
     ### CALCULATING EFFECT SIZES ###
 
-    if(es == 'SMD'){
+    # if(es == 'SMD'){
 
       ### names of old and new variables ###
 
@@ -202,7 +202,11 @@ sim_meta <- function(min_obs = 100,
                   sd1 = sd(x),
                   sd2 = sd(y),
                   n1 = length(x),
-                  n2 = length(y))
+                  n2 = length(y),
+                  r = cor(x,y),
+                  z = fisherz(r),
+                  n = length(x),
+                  se_z = 1/sqrt(n-3))
 
       if(metaregression){
         data_aggr <- data_aggr %>%
@@ -257,21 +261,22 @@ sim_meta <- function(min_obs = 100,
                      sd2i = sd1,
                      n1i = n2,
                      n2i = n1) %>%
-      mutate(se = sqrt(vi)) %>%
+      mutate(se_g = sqrt(vi)) %>%
       rename(!!!setNames(lookup, new_names)) %>%
-      rename(hedges_g = yi) %>%
+      rename(hedges_g = yi,
+             variance_g = vi) %>%
       tibble() %>%
-      select(study, hedges_g, se, everything())
+      select(study, hedges_g,z,r, se_g, se_z, everything())
 
     ### CORRELATIONS ###
-    }else if(es == 'ZCOR'){
+    # }else if(es == 'ZCOR'){
 
-      data_aggr <- data_raw %>%
-        group_by(study, subgroups) %>%
-        summarise(r = cor(x,y),
-                  z = fisherz(r),
-                  n = length(x),
-                  se = 1/sqrt(n-3))
+      # data_aggr <- data_raw %>%
+      #   group_by(study, subgroups) %>%
+      #   summarise(r = cor(x,y),
+      #             z = fisherz(r),
+      #             n = length(x),
+      #             se = 1/sqrt(n-3))
 
       # if(metaregression){
       #   data_aggr <- data_aggr %>%
@@ -288,14 +293,14 @@ sim_meta <- function(min_obs = 100,
       #   rename(!!!setNames('moderator', mod_varname))
       # }
 
-      data_aggr <- data_aggr %>%
-        mutate(r = fisherz2r(z)) %>%
-        select(study, z, r,n,se, everything())
+      # data_aggr <- data_aggr_smd %>%
+      #   mutate(r = fisherz2r(z)) %>%
+      #   select(study, z, r,n,se, everything())
 
-      if(metaregression){
-        data_aggr <- data_aggr %>%
-          left_join(mod_data, by = join_by('subgroups'))
-      }
+      # if(metaregression){
+      #   data_aggr <- data_aggr %>%
+      #     left_join(mod_data, by = join_by('subgroups'))
+      # }
     }
 
     if(aggregate){
