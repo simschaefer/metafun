@@ -216,8 +216,6 @@ head(sim)
 ### Run Meta-Analysis on simulated data
 
 ```{r fig.width=10, fig.height=5, message=FALSE}
-require(meta)
-require(metafor)
 
 # choose only studies 1-10 for better readability
 analysis_data <- sim %>% 
@@ -241,4 +239,54 @@ metafor::forest(meta_random,
              prediction = TRUE, 
              print.tau2 = TRUE,
              leftlabs = c("Study", "r", "SE"))
+```
+
+# Subgroup-Analysis Standardized Mean Difference
+
+### Simulate data
+
+```{r}
+sim <- sim_meta(min_obs = 20,
+         max_obs = 2000,
+         n_studies = 1500,
+         smd_true = 0.6,
+         r_true = 0,
+         es = 'SMD',
+         random = TRUE,
+         tau = 0.1,
+         metaregression = TRUE,
+         mod_varname = c('subgroup'),
+         mod_labels = c('group1', 'group2'),
+         mod_effect = 0.2)
+
+head(sim %>% 
+       select(study, hedges_g, subgroup, everything()))
+```
+
+### Run Meta-Analysis on simulated data
+
+```{r fig.width=10, fig.height=5, message=FALSE}
+# choose only studies 1-10 for better readability
+analysis_data <- sim %>% 
+  filter(study <= 10)
+
+meta_random <- metagen(TE = hedges_g,
+                 seTE = se,
+                 studlab = study,
+                 data = analysis_data,
+                 sm = "SMD",
+                 fixed = FALSE,
+                 random = TRUE,
+                 method.tau = 'REML',
+                 method.random.ci = "HK",
+                 subgroup = subgroup,
+                 title = "Meta-Analysis Random Effects")
+
+summary(meta_random)
+
+
+metafor::forest(meta_random,
+             prediction = TRUE, 
+             print.tau2 = TRUE,
+             leftlabs = c("Study", "g", "SE"))
 ```
