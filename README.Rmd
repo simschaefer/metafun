@@ -236,7 +236,7 @@ metafor::forest(meta_random,
 ```{r}
 sim <- sim_meta(min_obs = 200,
          max_obs = 2000,
-         n_studies = 10,
+         n_studies = 15,
          smd_true = 0.6,
          r_true = 0,
          es = 'SMD',
