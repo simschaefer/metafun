@@ -55,7 +55,7 @@ head(sim)
 ```
 # Effect size and standard error
 
-```{r}
+```{r message=FALSE}
 require(tidyverse)
 
 ggplot(sim, aes(x = hedges_g, y = log(se), color = n_x))+
