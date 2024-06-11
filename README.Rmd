@@ -68,7 +68,7 @@ ggplot(sim, aes(x = hedges_g, y = log(se), color = n_x))+
 
 # Run Meta-Analysis on simulated data
 
-```{r}
+```{r message=FALSE}
 require(meta)
 
 metaanalysis <- metagen(TE = hedges_g,
@@ -109,7 +109,7 @@ head(sim)
 
 Run Random-Effects Meta-Analysis
 
-```{r fig.width=10, fig.height=5}
+```{r fig.width=10, fig.height=5, message=FALSE}
 require(meta)
 require(metafor)
 
