@@ -38,7 +38,7 @@ require(metafun)
 
 ## Fixed Effect Model
 
-### Simulate data
+### Simulate Data
 
 Simulates data of multiple studies using predefined effect sizes and between study heterogenity ($\tau$).
 
@@ -102,7 +102,7 @@ metafor::forest(meta_fixed,
 
 ## Random-Effects model Standardized Mean Difference
 
-### Simulate data
+### Simulate Data
 
 ```{r}
 sim <- sim_meta(min_obs = 200,
@@ -230,7 +230,7 @@ metafor::forest(meta_random,
 
 # Subgroup-Analysis Standardized Mean Difference
 
-### Simulate data
+### Simulate Data
 
 ```{r}
 sim <- sim_meta(min_obs = 200,
@@ -273,3 +273,53 @@ metafor::forest(meta_random,
              print.tau2 = TRUE,
              leftlabs = c("Study", "g", "SE"))
 ```
+
+# Metaregression
+
+## Simulate Data
+```{r}
+
+# define values of moderator variable:
+x <- 1:100/100
+
+# define slope:
+b <- -0.5
+
+df <- sim_meta(min_obs = 1000,
+               max_obs = 2000,
+               n_studies = 30,
+               smd_true = 0,
+               r_true = 0,
+               random = TRUE,
+               tau = 0.1,
+               random_effects = c('SMD'),
+               metaregression = TRUE,
+               mod_name = 'moderator',
+               smd_mod_effects = b*x,
+               r_mod_effects = rep(0,100),
+               mod_labels = x)
+
+# show correlation between moderator and effect size
+ggplot(df, aes(moderator,hedges_g))+
+  geom_point()+
+  geom_smooth(method = 'lm')
+
+mg <- metagen(TE = hedges_g,
+              seTE = se_g,
+              studlab = study,
+              data = df,
+              sm = "SMD",
+              fixed = FALSE,
+              random = TRUE,
+              method.tau = 'REML',
+              title = "Meta-Analysis fixed-effect",
+              tau.common = FALSE)
+
+m.gen.reg <- metareg(mg, ~moderator)
+
+summary(m.gen.reg)
+
+bubble(m.gen.reg, studlab = TRUE)
+
+```
+

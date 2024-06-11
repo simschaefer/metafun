@@ -10,6 +10,7 @@
 #' @param random if `TRUE` simulation includes between study heterogenity (random-effects model), if `FALSE` fixed effects model is used
 #' @param tau specify standard deviation of between study heterogenity. If moderator variable specified, tau is the residual heterogenity after including the moderator.
 #' @param metaregression set TRUE if categorical moderator should be included.
+#' @param mod_name variable name of moderator variable
 #' @param mod_labels labels of different subgroups of studies, if the moderator is a categorical variable.
 #' @param smd_mod_effects effect sizes in subgroups. Provide a vector of multiple effect sizes if moderator variable includes more than one group.
 #' @param r_mod_effects effect on correlation in each subgroup.
@@ -38,6 +39,7 @@ sim_meta <- function(min_obs = 100,
                      random = FALSE,
                      tau = 0.01,
                      metaregression = FALSE,
+                     mod_name = 'subgroups',
                      mod_labels = c(),
                      smd_mod_effects = c(),
                      r_mod_effects = c(),
@@ -191,7 +193,8 @@ sim_meta <- function(min_obs = 100,
 
       if(metaregression){
         data_aggr <- data_aggr %>%
-          left_join(mod_data, by = join_by('subgroups'))
+          left_join(mod_data, by = join_by('subgroups')) %>%
+          rename(!!!setNames('subgroups', mod_name))
       }else{
         data_aggr <- data_aggr %>%
           select(-subgroups)

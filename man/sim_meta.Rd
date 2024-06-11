@@ -15,6 +15,7 @@ sim_meta(
   random = FALSE,
   tau = 0.01,
   metaregression = FALSE,
+  mod_name = "subgroups",
   mod_labels = c(),
   smd_mod_effects = c(),
   r_mod_effects = c(),
@@ -42,6 +43,8 @@ sim_meta(
 \item{tau}{specify standard deviation of between study heterogenity. If moderator variable specified, tau is the residual heterogenity after including the moderator.}
 
 \item{metaregression}{set TRUE if categorical moderator should be included.}
+
+\item{mod_name}{variable name of moderator variable}
 
 \item{mod_labels}{labels of different subgroups of studies, if the moderator is a categorical variable.}
 
