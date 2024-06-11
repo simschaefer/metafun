@@ -285,9 +285,9 @@ x <- 1:100/100
 # define slope:
 b <- -0.5
 
-df <- sim_meta(min_obs = 1000,
-               max_obs = 2000,
-               n_studies = 30,
+df <- sim_meta(min_obs = 100,
+               max_obs = 1000,
+               n_studies = 50,
                smd_true = 0,
                r_true = 0,
                random = TRUE,
@@ -300,9 +300,13 @@ df <- sim_meta(min_obs = 1000,
                mod_labels = x)
 
 # show correlation between moderator and effect size
-ggplot(df, aes(moderator,hedges_g))+
+df %>% 
+  mutate(g_upper = hedges_g + 1.96*se_g,
+         g_lower = hedges_g - 1.96*se_g) %>% 
+ggplot(aes(moderator,hedges_g))+
   geom_point()+
-  geom_smooth(method = 'lm')
+  geom_errorbar(aes(ymin = g_lower, ymax = g_upper))+
+  geom_smooth(method = 'lm', se = FALSE, color = 'steelblue')
 
 mg <- metagen(TE = hedges_g,
               seTE = se_g,
