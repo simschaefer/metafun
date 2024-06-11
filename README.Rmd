@@ -72,14 +72,10 @@ ggplot(sim, aes(x = hedges_g, y = log(se), color = n_x))+
 ```{r message=FALSE}
 require(meta)
 
-# choose only studies 1-10 for better readability
-analysis_data <- sim %>% 
-  filter(study <= 10)
-
 meta_fixed <- metagen(TE = hedges_g,
                  seTE = se,
                  studlab = study,
-                 data = analysis_data,
+                 data = sim,
                  sm = "SMD",
                  fixed = TRUE,
                  random = FALSE,
@@ -105,7 +101,7 @@ metafor::forest(meta_fixed,
 ### Simulate data
 
 ```{r}
-sim <- sim_meta(min_obs = 20,
+sim <- sim_meta(min_obs = 10,
          max_obs = 2000,
          n_studies = 1500,
          smd_true = 0.7,
@@ -122,14 +118,10 @@ head(sim)
 require(meta)
 require(metafor)
 
-# choose only studies 1-10 for better readability
-analysis_data <- sim %>% 
-  filter(study <= 10)
-
 meta_random <- metagen(TE = hedges_g,
                  seTE = se,
                  studlab = study,
-                 data = analysis_data,
+                 data = sim,
                  sm = "SMD",
                  fixed = FALSE,
                  random = TRUE,
@@ -155,7 +147,7 @@ metafor::forest(meta_random,
 Simulates data of multiple studies using predefined effect sizes and between study heterogenity ($\tau$).
 
 ```{r}
-sim <- sim_meta(min_obs = 20,
+sim <- sim_meta(min_obs = 10,
          max_obs = 2000,
          n_studies = 1500,
          smd_true = 0,
@@ -170,14 +162,10 @@ head(sim)
 ```{r message=FALSE}
 require(meta)
 
-# choose only studies 1-10 for better readability
-analysis_data <- sim %>% 
-  filter(study <= 10)
-
 meta_fixed <- metagen(TE = z,
                  seTE = se,
                  studlab = study,
-                 data = analysis_data,
+                 data = sim,
                  sm = "ZCOR",
                  fixed = TRUE,
                  random = FALSE,
@@ -201,7 +189,7 @@ metafor::forest(meta_fixed,
 ### Simulate data
 
 ```{r}
-sim <- sim_meta(min_obs = 20,
+sim <- sim_meta(min_obs = 10,
          max_obs = 2000,
          n_studies = 1500,
          smd_true = 0,
@@ -217,14 +205,10 @@ head(sim)
 
 ```{r fig.width=10, fig.height=5, message=FALSE}
 
-# choose only studies 1-10 for better readability
-analysis_data <- sim %>% 
-  filter(study <= 10)
-
 meta_random <- metagen(TE = z,
                  seTE = se,
                  studlab = study,
-                 data = analysis_data,
+                 data = sim,
                  sm = "ZCOR",
                  fixed = FALSE,
                  random = TRUE,
@@ -246,7 +230,7 @@ metafor::forest(meta_random,
 ### Simulate data
 
 ```{r}
-sim <- sim_meta(min_obs = 20,
+sim <- sim_meta(min_obs = 10,
          max_obs = 2000,
          n_studies = 1500,
          smd_true = 0.6,
@@ -266,14 +250,10 @@ head(sim %>%
 ### Run Meta-Analysis on simulated data
 
 ```{r fig.width=10, fig.height=5, message=FALSE}
-# choose only studies 1-10 for better readability
-analysis_data <- sim %>% 
-  filter(study <= 10)
-
 meta_random <- metagen(TE = hedges_g,
                  seTE = se,
                  studlab = study,
-                 data = analysis_data,
+                 data = sim,
                  sm = "SMD",
                  fixed = FALSE,
                  random = TRUE,
