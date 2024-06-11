@@ -5,16 +5,17 @@
 \title{sim_meta}
 \usage{
 sim_meta(
-  min_obs,
-  max_obs,
-  n_studies,
-  es_true,
+  min_obs = 100,
+  max_obs = 500,
+  n_studies = 100,
+  smd_true = 0.5,
+  r_true = 0,
   es = "SMD",
-  fixed = TRUE,
+  sd1 = 1,
+  sd2 = 1,
   random = FALSE,
   tau = 0.01,
   varnames = c("x", "y"),
-  n_variance = 0,
   metaregression = FALSE,
   mod_varname = c(),
   mod_labels = c(),
@@ -29,29 +30,31 @@ sim_meta(
 
 \item{n_studies}{number of studies}
 
-\item{es_true}{true effect size}
+\item{smd_true}{true effect size of standardized mean difference between variable x and y}
+
+\item{r_true}{correlation between x and y. Has to be specified if effect size is with-groups (correlation/ pre-post mean difference)}
 
 \item{es}{type of effect size (choose 'SMD' fpr standardized mean difference and 'ZCOR' for correlations)}
 
-\item{fixed}{simulation based on fixed effects model (TRUE)}
+\item{sd1}{standard deviation of x}
 
-\item{random}{simulation based on between study heterogenity (random-effects model)}
+\item{sd2}{standard deviation of y}
+
+\item{random}{if \code{TRUE} simulation includes between study heterogenity (random-effects model), if \code{FALSE} fixed effects model is used}
 
 \item{tau}{specify standard deviation of between study heterogenity. If moderator variable specified, tau is the residual heterogenity after including the moderator.}
 
-\item{varnames}{variable names}
+\item{varnames}{variable names (default: x and y)}
 
-\item{n_variance}{variance between n1 and n2. Both sample sizes are drawn from normal distributions using the specified value as standard deviation.}
-
-\item{metaregression}{set TRUE if categorical or continuous moderator should be included.}
+\item{metaregression}{set TRUE if categorical moderator should be included.}
 
 \item{mod_varname}{specify the variable name of the moderator}
 
-\item{mod_labels}{specify the labels of different groups of studies, if the moderator is a categorical variable.}
+\item{mod_labels}{labels of different subgroups of studies, if the moderator is a categorical variable.}
 
 \item{mod_effect}{standardize size of moderation effect for categorical moderator. Provide a vector of multiple effect sizes if moderator variable includes more than two groups.}
 
-\item{aggregate}{return only aggregated data (TRUE) or list containing raw data (FALSE).}
+\item{aggregate}{return only aggregated data (TRUE) or raw data (FALSE).}
 }
 \value{
 list containing raw data (data_raw) and aggregated data with computed effects sizes and standard errors (data_aggr)
@@ -60,5 +63,5 @@ list containing raw data (data_raw) and aggregated data with computed effects si
 sim_meta
 }
 \examples{
-sim_meta(min_obs = 100, max_obs = 500, n_studies = 20, es_true = 0.7)
+sim_meta(min_obs = 100, max_obs = 500, n_studies = 20, smd_true = 0.7)
 }

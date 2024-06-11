@@ -39,25 +39,21 @@ between study heterogenity ($\tau$).
 sim <- sim_meta(min_obs = 20,
          max_obs = 2000,
          n_studies = 1500,
-         es_true = 0.3,
+         smd_true = 0.3,
+         r_true = 0,
          es = 'SMD',
-         fixed = TRUE,
-         random = FALSE,
-         varnames = c('x', 'y'))
-#> Warning in sim_meta(min_obs = 20, max_obs = 2000, n_studies = 1500, es_true =
-#> 0.3, : Number of moderator labels (0) does not match the number of effect sizes
-#> (1). Only the first -1 effect sizes are used.
+         random = FALSE)
 
-head(sim$data_aggr)
+head(sim)
 #> # A tibble: 6 × 10
-#>   study hedges_g     se mean_x   mean_y  sd_x  sd_y   n_x   n_y      vi
-#>   <int>    <dbl>  <dbl>  <dbl>    <dbl> <dbl> <dbl> <int> <int>   <dbl>
-#> 1     1    0.269 0.0499  0.278  0.00232 1.03  1.03    809   809 0.00249
-#> 2     2    0.284 0.0368  0.302  0.0217  0.997 0.977  1492  1492 0.00135
-#> 3     3    0.254 0.0554  0.290  0.0353  1.01  0.988   658   658 0.00306
-#> 4     4    0.331 0.0325  0.322 -0.00239 0.972 0.989  1918  1918 0.00106
-#> 5     5    0.351 0.110   0.368  0.0185  0.970 1.02    169   169 0.0120 
-#> 6     6    0.351 0.0405  0.351 -0.00456 1.04  0.982  1241  1241 0.00164
+#>   study hedges_g     se  mean_x mean_y  sd_x  sd_y   n_x   n_y      vi
+#>   <int>    <dbl>  <dbl>   <dbl>  <dbl> <dbl> <dbl> <int> <int>   <dbl>
+#> 1     1    0.286 0.0381  0.0386  0.326 1.00  1.01   1391  1391 0.00145
+#> 2     2    0.272 0.0426 -0.0317  0.242 1.01  1.00   1110  1110 0.00182
+#> 3     3    0.332 0.0435 -0.0222  0.308 1.00  0.981  1070  1070 0.00189
+#> 4     4    0.334 0.0395 -0.0295  0.302 0.986 0.995  1302  1302 0.00156
+#> 5     5    0.338 0.0448  0.0132  0.357 1.01  1.03   1009  1009 0.00201
+#> 6     6    0.263 0.0447  0.0292  0.290 0.988 0.990  1009  1009 0.00200
 ```
 
 # Effect size and standard error
@@ -76,7 +72,7 @@ require(tidyverse)
 #> ✖ dplyr::lag()    masks stats::lag()
 #> ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
 
-ggplot(sim$data_aggr, aes(x = hedges_g, y = log(se), color = n_x))+
+ggplot(sim, aes(x = hedges_g, y = log(se), color = n_x))+
   geom_point(alpha = 0.5)+
   theme_minimal()+
   labs(x = "Effect Size (ES)",
@@ -84,7 +80,7 @@ ggplot(sim$data_aggr, aes(x = hedges_g, y = log(se), color = n_x))+
   scale_color_viridis_c()
 ```
 
-<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-3-1.png" width="80%" />
 
 # Run Meta-Analysis on simulated data
 
@@ -100,7 +96,7 @@ require(meta)
 metaanalysis <- metagen(TE = hedges_g,
                  seTE = se,
                  studlab = study,
-                 data = sim$data_aggr %>% filter(study <= 10),
+                 data = sim %>% filter(study <= 10),
                  sm = "SMD",
                  fixed = TRUE,
                  random = FALSE,
@@ -110,29 +106,29 @@ summary(metaanalysis)
 #> Review:     Meta-Analysis fixed-effect
 #> 
 #>       SMD           95%-CI %W(common)
-#> 1  0.2685 [0.1706; 0.3664]        6.6
-#> 2  0.2843 [0.2122; 0.3564]       12.2
-#> 3  0.2545 [0.1460; 0.3630]        5.4
-#> 4  0.3312 [0.2675; 0.3950]       15.7
-#> 5  0.3510 [0.1362; 0.5659]        1.4
-#> 6  0.3511 [0.2718; 0.4304]       10.1
-#> 7  0.3260 [0.2594; 0.3925]       14.4
-#> 8  0.3006 [0.2319; 0.3693]       13.5
-#> 9  0.3275 [0.2553; 0.3997]       12.2
-#> 10 0.2610 [0.1742; 0.3478]        8.4
+#> 1  0.2856 [0.2109; 0.3603]       13.9
+#> 2  0.2717 [0.1881; 0.3552]       11.1
+#> 3  0.3322 [0.2469; 0.4175]       10.6
+#> 4  0.3343 [0.2570; 0.4117]       13.0
+#> 5  0.3376 [0.2498; 0.4255]       10.0
+#> 6  0.2634 [0.1758; 0.3510]       10.1
+#> 7  0.3300 [0.2607; 0.3992]       16.2
+#> 8  0.3367 [0.2198; 0.4537]        5.7
+#> 9  0.2582 [0.1417; 0.3747]        5.7
+#> 10 0.3520 [0.2079; 0.4960]        3.7
 #> 
 #> Number of studies: k = 10
 #> 
 #>                        SMD           95%-CI     z  p-value
-#> Common effect model 0.3082 [0.2829; 0.3334] 23.94 < 0.0001
+#> Common effect model 0.3093 [0.2815; 0.3371] 21.77 < 0.0001
 #> 
 #> Quantifying heterogeneity:
-#>  tau^2 = 0 [0.0000; 0.0020]; tau = 0 [0.0000; 0.0444]
+#>  tau^2 = 0 [0.0000; 0.0018]; tau = 0 [0.0000; 0.0424]
 #>  I^2 = 0.0% [0.0%; 62.4%]; H = 1.00 [1.00; 1.63]
 #> 
 #> Test of heterogeneity:
 #>     Q d.f. p-value
-#>  5.51    9  0.7880
+#>  4.93    9  0.8404
 #> 
 #> Details on meta-analytical method:
 #> - Inverse variance method
@@ -146,33 +142,28 @@ summary(metaanalysis)
 forest(metaanalysis)
 ```
 
-<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" /> \#
+<img src="man/figures/README-unnamed-chunk-5-1.png" width="80%" /> \#
 Simulate Random-Effects model
 
 ``` r
 sim <- sim_meta(min_obs = 20,
          max_obs = 2000,
          n_studies = 1500,
-         es_true = 0.7,
+         smd_true = 0.7,
          es = 'SMD',
-         fixed = FALSE,
          random = TRUE,
-         tau = 0.05,
-         varnames = c('x', 'y'))
-#> Warning in sim_meta(min_obs = 20, max_obs = 2000, n_studies = 1500, es_true =
-#> 0.7, : Number of moderator labels (0) does not match the number of effect sizes
-#> (1). Only the first -1 effect sizes are used.
+         tau = 0.05)
 
-head(sim$data_aggr)
+head(sim)
 #> # A tibble: 6 × 10
-#>   study hedges_g     se mean_x    mean_y  sd_x  sd_y   n_x   n_y      vi
-#>   <int>    <dbl>  <dbl>  <dbl>     <dbl> <dbl> <dbl> <int> <int>   <dbl>
-#> 1     1    0.639 0.0394  0.634 -0.000413 0.978 1.01   1356  1356 0.00155
-#> 2     2    0.763 0.0856  0.711 -0.0368   0.974 0.984   293   293 0.00732
-#> 3     3    0.664 0.0352  0.651 -0.00905  0.992 0.996  1707  1707 0.00124
-#> 4     4    0.698 0.0388  0.690 -0.0183   1.06  0.965  1409  1409 0.00151
-#> 5     5    0.653 0.0561  0.689  0.0411   0.991 0.992   670   670 0.00314
-#> 6     6    0.847 0.0519  0.717 -0.136    0.997 1.02    809   809 0.00269
+#>   study hedges_g     se  mean_x mean_y  sd_x  sd_y   n_x   n_y      vi
+#>   <int>    <dbl>  <dbl>   <dbl>  <dbl> <dbl> <dbl> <int> <int>   <dbl>
+#> 1     1    0.711 0.0455 -0.0109  0.691 0.999 0.975  1028  1028 0.00207
+#> 2     2    0.689 0.0827  0.0370  0.738 1.04  0.998   310   310 0.00683
+#> 3     3    0.590 0.0380  0.0977  0.692 1.02  0.992  1445  1445 0.00144
+#> 4     4    0.624 0.0343  0.0152  0.644 1.02  0.998  1786  1786 0.00117
+#> 5     5    0.832 0.0568 -0.0323  0.808 1.01  1.00    673   673 0.00323
+#> 6     6    0.769 0.0372 -0.0618  0.708 0.999 1.00   1555  1555 0.00138
 ```
 
 Run Random-Effects Meta-Analysis
@@ -195,7 +186,7 @@ require(metafor)
 metaanalysis <- metagen(TE = hedges_g,
                  seTE = se,
                  studlab = study,
-                 data = sim$data_aggr %>% filter(study <= 10),
+                 data = sim %>% filter(study <= 10),
                  sm = "SMD",
                  fixed = FALSE,
                  random = TRUE,
@@ -207,29 +198,29 @@ summary(metaanalysis)
 #> Review:     Meta-Analysis fixed-effect
 #> 
 #>       SMD           95%-CI %W(random)
-#> 1  0.6385 [0.5613; 0.7157]       12.2
-#> 2  0.7631 [0.5954; 0.9308]        5.4
-#> 3  0.6636 [0.5947; 0.7325]       13.1
-#> 4  0.6978 [0.6218; 0.7739]       12.3
-#> 5  0.6528 [0.5429; 0.7627]        9.0
-#> 6  0.8465 [0.7448; 0.9482]        9.8
-#> 7  0.6037 [0.4995; 0.7078]        9.5
-#> 8  0.5497 [0.3636; 0.7359]        4.6
-#> 9  0.6381 [0.5582; 0.7179]       11.9
-#> 10 0.7040 [0.6262; 0.7819]       12.1
+#> 1  0.7112 [0.6220; 0.8003]       10.1
+#> 2  0.6885 [0.5265; 0.8506]        6.1
+#> 3  0.5904 [0.5159; 0.6649]       11.0
+#> 4  0.6243 [0.5571; 0.6914]       11.5
+#> 5  0.8316 [0.7202; 0.9430]        8.7
+#> 6  0.7692 [0.6964; 0.8421]       11.1
+#> 7  0.6372 [0.5654; 0.7089]       11.2
+#> 8  0.6572 [0.5817; 0.7327]       10.9
+#> 9  0.5666 [0.4833; 0.6498]       10.4
+#> 10 0.7698 [0.6642; 0.8754]        9.0
 #> 
 #> Number of studies: k = 10
 #> 
 #>                              SMD           95%-CI     t  p-value
-#> Random effects model (HK) 0.6779 [0.6243; 0.7314] 28.62 < 0.0001
+#> Random effects model (HK) 0.6794 [0.6184; 0.7404] 25.18 < 0.0001
 #> 
 #> Quantifying heterogeneity:
-#>  tau^2 = 0.0030 [0.0000; 0.0187]; tau = 0.0551 [0.0000; 0.1368]
-#>  I^2 = 50.9% [0.0%; 76.1%]; H = 1.43 [1.00; 2.05]
+#>  tau^2 = 0.0051 [0.0013; 0.0223]; tau = 0.0717 [0.0366; 0.1493]
+#>  I^2 = 72.3% [47.6%; 85.4%]; H = 1.90 [1.38; 2.62]
 #> 
 #> Test of heterogeneity:
 #>      Q d.f. p-value
-#>  18.33    9  0.0315
+#>  32.52    9  0.0002
 #> 
 #> Details on meta-analytical method:
 #> - Inverse variance method
@@ -241,4 +232,4 @@ summary(metaanalysis)
 metafor::forest(metaanalysis, header = TRUE)
 ```
 
-<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-7-1.png" width="80%" />
