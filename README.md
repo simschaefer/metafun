@@ -21,16 +21,16 @@ You can install the development version of metafun from
 devtools::install_github("simschaefer/metafun")
 ```
 
-## Example
-
-This is a basic example which shows you how to solve a common problem:
+Load package in R:
 
 ``` r
-library(metafun)
-## basic example code
+require(metafun)
+#> Loading required package: metafun
 ```
 
-## Simulate Fixed-Effects model
+# Fixed-Effects model Standardized Mean Difference
+
+## Simulate data
 
 Simulates data of multiple studies using predefined effect sizes and
 between study heterogenity ($\tau$).
@@ -48,15 +48,15 @@ head(sim)
 #> # A tibble: 6 × 10
 #>   study hedges_g     se   mean_x mean_y  sd_x  sd_y   n_x   n_y      vi
 #>   <int>    <dbl>  <dbl>    <dbl>  <dbl> <dbl> <dbl> <int> <int>   <dbl>
-#> 1     1    0.228 0.0439  0.0486   0.278 0.979 1.03   1046  1046 0.00192
-#> 2     2    0.322 0.0322  0.0116   0.335 1.01  1.00   1958  1958 0.00103
-#> 3     3    0.220 0.0440 -0.00439  0.225 1.03  1.06   1040  1040 0.00193
-#> 4     4    0.261 0.0335 -0.0191   0.245 1.03  0.987  1802  1802 0.00112
-#> 5     5    0.334 0.0327 -0.0268   0.310 1.01  1.00   1898  1898 0.00107
-#> 6     6    0.324 0.0376 -0.0120   0.309 1.01  0.970  1436  1436 0.00141
+#> 1     1    0.382 0.0389 -0.0451   0.331 0.988 0.986  1348  1348 0.00151
+#> 2     2    0.308 0.0863 -0.0794   0.227 1.03  0.960   272   272 0.00744
+#> 3     3    0.397 0.0357 -0.00463  0.389 1.00  0.974  1599  1599 0.00128
+#> 4     4    0.263 0.0323  0.0259   0.289 0.987 1.01   1939  1939 0.00104
+#> 5     5    0.344 0.0614 -0.00594  0.331 0.977 0.982   538   538 0.00377
+#> 6     6    0.308 0.0325 -0.0179   0.294 1.01  1.02   1920  1920 0.00105
 ```
 
-# Effect size and standard error
+## Effect size and standard error
 
 ``` r
 require(tidyverse)
@@ -69,9 +69,9 @@ ggplot(sim, aes(x = hedges_g, y = log(se), color = n_x))+
   scale_color_viridis_c()
 ```
 
-<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
 
-# Run Meta-Analysis on simulated data
+## Run Meta-Analysis on simulated data
 
 ``` r
 require(meta)
@@ -89,29 +89,29 @@ summary(metaanalysis)
 #> Review:     Meta-Analysis fixed-effect
 #> 
 #>       SMD            95%-CI %W(common)
-#> 1  0.2277 [ 0.1417; 0.3137]        9.6
-#> 2  0.3219 [ 0.2588; 0.3849]       17.8
-#> 3  0.2199 [ 0.1337; 0.3062]        9.5
-#> 4  0.2610 [ 0.1954; 0.3265]       16.5
-#> 5  0.3337 [ 0.2696; 0.3977]       17.2
-#> 6  0.3239 [ 0.2502; 0.3975]       13.1
-#> 7  0.4734 [ 0.2297; 0.7170]        1.2
-#> 8  0.3474 [ 0.2639; 0.4309]       10.1
-#> 9  0.3017 [ 0.1730; 0.4304]        4.3
-#> 10 0.0886 [-0.2140; 0.3912]        0.8
+#> 1  0.3815 [ 0.3053; 0.4577]       10.7
+#> 2  0.3077 [ 0.1387; 0.4768]        2.2
+#> 3  0.3975 [ 0.3275; 0.4675]       12.7
+#> 4  0.2633 [ 0.2000; 0.3265]       15.5
+#> 5  0.3443 [ 0.2239; 0.4647]        4.3
+#> 6  0.3077 [ 0.2440; 0.3713]       15.3
+#> 7  0.3610 [ 0.2931; 0.4289]       13.4
+#> 8  0.3058 [ 0.2395; 0.3721]       14.1
+#> 9  0.3435 [ 0.2638; 0.4231]        9.8
+#> 10 0.1305 [-0.0425; 0.3036]        2.1
 #> 
 #> Number of studies: k = 10
 #> 
 #>                        SMD           95%-CI     z  p-value
-#> Common effect model 0.2972 [0.2706; 0.3238] 21.90 < 0.0001
+#> Common effect model 0.3283 [0.3034; 0.3532] 25.85 < 0.0001
 #> 
 #> Quantifying heterogeneity:
-#>  tau^2 = 0.0008 [0.0000; 0.0195]; tau = 0.0291 [0.0000; 0.1397]
-#>  I^2 = 37.2% [0.0%; 70.1%]; H = 1.26 [1.00; 1.83]
+#>  tau^2 = 0.0012 [0.0000; 0.0141]; tau = 0.0346 [0.0000; 0.1185]
+#>  I^2 = 46.1% [0.0%; 74.1%]; H = 1.36 [1.00; 1.96]
 #> 
 #> Test of heterogeneity:
 #>      Q d.f. p-value
-#>  14.33    9  0.1110
+#>  16.71    9  0.0535
 #> 
 #> Details on meta-analytical method:
 #> - Inverse variance method
@@ -119,7 +119,7 @@ summary(metaanalysis)
 #> - Q-Profile method for confidence interval of tau^2 and tau
 ```
 
-# Forest plot
+## Forest plot
 
 ``` r
 metafor::forest(metaanalysis,
@@ -129,8 +129,11 @@ metafor::forest(metaanalysis,
              leftlabs = c("Study", "g", "SE"))
 ```
 
-<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" /> \#
-Simulate Random-Effects model
+<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
+
+# Random-Effects model Standardized Mean Difference
+
+## Simulate data
 
 ``` r
 sim <- sim_meta(min_obs = 20,
@@ -145,15 +148,15 @@ head(sim)
 #> # A tibble: 6 × 10
 #>   study hedges_g     se  mean_x mean_y  sd_x  sd_y   n_x   n_y      vi
 #>   <int>    <dbl>  <dbl>   <dbl>  <dbl> <dbl> <dbl> <int> <int>   <dbl>
-#> 1     1    0.739 0.0407 -0.0268  0.703 1.01  0.964  1288  1288 0.00166
-#> 2     2    0.707 0.0501 -0.0305  0.686 1.03  0.997   845   845 0.00251
-#> 3     3    0.647 0.0468  0.0517  0.694 0.972 1.01    961   961 0.00219
-#> 4     4    0.756 0.0330 -0.0461  0.711 1.01  0.992  1963  1963 0.00109
-#> 5     5    0.575 0.0495  0.0235  0.603 0.995 1.02    851   851 0.00245
-#> 6     6    0.830 0.160  -0.0178  0.778 0.992 0.915    85    85 0.0256
+#> 1     1    1.07  0.276  -0.291   0.716 0.963 0.900    30    30 0.0762 
+#> 2     2    0.702 0.0717 -0.0610  0.647 0.954 1.06    413   413 0.00514
+#> 3     3    0.611 0.103  -0.0405  0.578 0.996 1.02    199   199 0.0105 
+#> 4     4    0.690 0.106   0.0294  0.699 0.947 0.990   188   188 0.0113 
+#> 5     5    0.613 0.0394  0.0427  0.670 1.04  1.00   1347  1347 0.00155
+#> 6     6    0.793 0.108  -0.180   0.628 1.05  0.982   186   186 0.0116
 ```
 
-Run Random-Effects Meta-Analysis
+## Run Meta-Analysis on simulated data
 
 ``` r
 require(meta)
@@ -174,29 +177,29 @@ summary(metaanalysis)
 #> Review:     Meta-Analysis fixed-effect
 #> 
 #>       SMD           95%-CI %W(random)
-#> 1  0.7394 [0.6596; 0.8192]       11.6
-#> 2  0.7067 [0.6084; 0.8049]       10.5
-#> 3  0.6469 [0.5552; 0.7386]       10.9
-#> 4  0.7565 [0.6917; 0.8212]       12.4
-#> 5  0.5745 [0.4776; 0.6715]       10.6
-#> 6  0.8304 [0.5170; 1.1437]        3.1
-#> 7  0.7431 [0.6656; 0.8206]       11.7
-#> 8  0.4979 [0.4180; 0.5778]       11.6
-#> 9  0.7833 [0.6744; 0.8921]        9.9
-#> 10 0.7719 [0.6221; 0.9217]        7.8
+#> 1  1.0669 [0.5260; 1.6077]        1.0
+#> 2  0.7017 [0.5612; 0.8422]        9.5
+#> 3  0.6111 [0.4101; 0.8121]        5.8
+#> 4  0.6901 [0.4820; 0.8982]        5.5
+#> 5  0.6131 [0.5358; 0.6904]       16.8
+#> 6  0.7933 [0.5823; 1.0044]        5.3
+#> 7  0.7869 [0.7208; 0.8531]       18.4
+#> 8  0.7747 [0.5562; 0.9932]        5.0
+#> 9  0.6445 [0.5558; 0.7332]       15.2
+#> 10 0.7968 [0.7242; 0.8694]       17.5
 #> 
 #> Number of studies: k = 10
 #> 
 #>                              SMD           95%-CI     t  p-value
-#> Random effects model (HK) 0.6928 [0.6210; 0.7645] 21.84 < 0.0001
+#> Random effects model (HK) 0.7168 [0.6536; 0.7800] 25.65 < 0.0001
 #> 
 #> Quantifying heterogeneity:
-#>  tau^2 = 0.0071 [0.0022; 0.0304]; tau = 0.0841 [0.0466; 0.1744]
-#>  I^2 = 77.9% [59.5%; 87.9%]; H = 2.13 [1.57; 2.87]
+#>  tau^2 = 0.0031 [0.0003; 0.0268]; tau = 0.0558 [0.0168; 0.1638]
+#>  I^2 = 58.9% [17.4%; 79.6%]; H = 1.56 [1.10; 2.21]
 #> 
 #> Test of heterogeneity:
-#>      Q d.f.  p-value
-#>  40.66    9 < 0.0001
+#>      Q d.f. p-value
+#>  21.91    9  0.0092
 #> 
 #> Details on meta-analytical method:
 #> - Inverse variance method
@@ -208,4 +211,4 @@ summary(metaanalysis)
 metafor::forest(metaanalysis, header = TRUE)
 ```
 
-<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />

@@ -29,16 +29,14 @@ You can install the development version of metafun from [GitHub](https://github.
 devtools::install_github("simschaefer/metafun")
 ```
 
-## Example
-
-This is a basic example which shows you how to solve a common problem:
-
-```{r example}
-library(metafun)
-## basic example code
+Load package in R:
+```{r}
+require(metafun)
 ```
 
-## Simulate Fixed-Effects model
+# Fixed-Effects model Standardized Mean Difference
+
+## Simulate data
 
 Simulates data of multiple studies using predefined effect sizes and between study heterogenity ($\tau$).
 
@@ -53,7 +51,8 @@ sim <- sim_meta(min_obs = 20,
 
 head(sim)
 ```
-# Effect size and standard error
+
+## Effect size and standard error
 
 ```{r message=FALSE}
 require(tidyverse)
@@ -66,7 +65,7 @@ ggplot(sim, aes(x = hedges_g, y = log(se), color = n_x))+
   scale_color_viridis_c()
 ```
 
-# Run Meta-Analysis on simulated data
+## Run Meta-Analysis on simulated data
 
 ```{r message=FALSE}
 require(meta)
@@ -84,7 +83,8 @@ summary(metaanalysis)
 
 ```
 
-# Forest plot
+
+## Forest plot
 ```{r fig.width=10, fig.height=5}
 metafor::forest(metaanalysis,
              sortvar = TE,
@@ -93,7 +93,11 @@ metafor::forest(metaanalysis,
              leftlabs = c("Study", "g", "SE"))
 
 ```
-# Simulate Random-Effects model
+
+
+# Random-Effects model Standardized Mean Difference
+
+## Simulate data
 
 ```{r}
 sim <- sim_meta(min_obs = 20,
@@ -107,7 +111,7 @@ sim <- sim_meta(min_obs = 20,
 head(sim)
 ```
 
-Run Random-Effects Meta-Analysis
+## Run Meta-Analysis on simulated data
 
 ```{r fig.width=10, fig.height=5, message=FALSE}
 require(meta)
