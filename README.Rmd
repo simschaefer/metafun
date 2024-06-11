@@ -34,9 +34,11 @@ Load package in R:
 require(metafun)
 ```
 
-# Fixed-Effects model Standardized Mean Difference
+# Standardized Mean Differences
 
-## Simulate data
+## Fixed Effect Model
+
+### Simulate data
 
 Simulates data of multiple studies using predefined effect sizes and between study heterogenity ($\tau$).
 
@@ -52,7 +54,7 @@ sim <- sim_meta(min_obs = 20,
 head(sim)
 ```
 
-## Effect size and standard error
+### Effect size and standard error
 
 ```{r message=FALSE}
 require(tidyverse)
@@ -65,7 +67,7 @@ ggplot(sim, aes(x = hedges_g, y = log(se), color = n_x))+
   scale_color_viridis_c()
 ```
 
-## Run Meta-Analysis on simulated data
+### Run Meta-Analysis on simulated data
 
 ```{r message=FALSE}
 require(meta)
@@ -88,7 +90,7 @@ summary(meta_fixed)
 ```
 
 
-## Forest plot
+### Forest plot
 ```{r fig.width=10, fig.height=5}
 metafor::forest(meta_fixed,
              prediction = TRUE, 
@@ -98,9 +100,9 @@ metafor::forest(meta_fixed,
 ```
 
 
-# Random-Effects model Standardized Mean Difference
+## Random-Effects model Standardized Mean Difference
 
-## Simulate data
+### Simulate data
 
 ```{r}
 sim <- sim_meta(min_obs = 20,
@@ -114,7 +116,7 @@ sim <- sim_meta(min_obs = 20,
 head(sim)
 ```
 
-## Run Meta-Analysis on simulated data
+### Run Meta-Analysis on simulated data
 
 ```{r fig.width=10, fig.height=5, message=FALSE}
 require(meta)
@@ -131,7 +133,7 @@ meta_random <- metagen(TE = hedges_g,
                  sm = "SMD",
                  fixed = FALSE,
                  random = TRUE,
-                 method.tau = 'PM',
+                 method.tau = 'REML',
                  method.random.ci = "HK",
                  title = "Meta-Analysis Random Effects")
 
@@ -144,3 +146,99 @@ metafor::forest(meta_random,
              leftlabs = c("Study", "g", "SE"))
 ```
 
+# Correlations
+
+## Fixed Effect Model
+
+### Simulate data
+
+Simulates data of multiple studies using predefined effect sizes and between study heterogenity ($\tau$).
+
+```{r}
+sim <- sim_meta(min_obs = 20,
+         max_obs = 2000,
+         n_studies = 1500,
+         smd_true = 0,
+         r_true = 0.5,
+         es = 'ZCOR',
+         random = FALSE)
+
+head(sim)
+```
+### Run Meta-Analysis on simulated data
+
+```{r message=FALSE}
+require(meta)
+
+# choose only studies 1-10 for better readability
+analysis_data <- sim %>% 
+  filter(study <= 10)
+
+meta_fixed <- metagen(TE = z,
+                 seTE = se,
+                 studlab = study,
+                 data = analysis_data,
+                 sm = "ZCOR",
+                 fixed = TRUE,
+                 random = FALSE,
+                 title = "Meta-Analysis Fixed effect")
+
+summary(meta_fixed)
+
+```
+
+### Forest plot
+```{r fig.width=10, fig.height=5}
+metafor::forest(meta_fixed,
+             prediction = TRUE, 
+             print.tau2 = TRUE,
+             leftlabs = c("Study", "r", "SE"))
+
+```
+
+## Random Effects Model
+
+### Simulate data
+
+```{r}
+sim <- sim_meta(min_obs = 20,
+         max_obs = 2000,
+         n_studies = 1500,
+         smd_true = 0,
+         r_true = 0.5,
+         es = 'ZCOR',
+         random = TRUE,
+         tau = 0.1)
+
+head(sim)
+```
+
+### Run Meta-Analysis on simulated data
+
+```{r fig.width=10, fig.height=5, message=FALSE}
+require(meta)
+require(metafor)
+
+# choose only studies 1-10 for better readability
+analysis_data <- sim %>% 
+  filter(study <= 10)
+
+meta_random <- metagen(TE = z,
+                 seTE = se,
+                 studlab = study,
+                 data = analysis_data,
+                 sm = "ZCOR",
+                 fixed = FALSE,
+                 random = TRUE,
+                 method.tau = 'REML',
+                 method.random.ci = "HK",
+                 title = "Meta-Analysis Random Effects")
+
+summary(meta_random)
+
+
+metafor::forest(meta_random,
+             prediction = TRUE, 
+             print.tau2 = TRUE,
+             leftlabs = c("Study", "r", "SE"))
+```
