@@ -50,6 +50,7 @@ sim_meta <- function(min_obs = 100,
   ## errors, warnings, messages ##
   if(!metaregression){
     smd_mod_effects <- 0
+    mod_name <- 'subgroups'
   }else{
     if(length(mod_labels)!= length(smd_mod_effects)){
       n_effects <- length(smd_mod_effects)

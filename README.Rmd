@@ -278,7 +278,6 @@ metafor::forest(meta_random,
 
 ## Simulate Data
 ```{r}
-
 # define values of moderator variable:
 x <- 1:100/100
 
