@@ -199,6 +199,9 @@ sim_meta <- function(min_obs = 100,
       }else{
         data_aggr <- data_aggr %>%
           select(-subgroups)
+
+        data_raw <- data_raw %>%
+          select(-subgroups)
       }
 
     # nam <- c("mean", "mean", "sd", "sd", "n", "n")
