@@ -23,7 +23,7 @@
 #' @importFrom metafor escalc
 #' @importFrom tidyr unnest
 #' @importFrom faux rnorm_multi
-#' @importFrom dplyr summarise bind_rows group_by %>% mutate sym tibble rename select
+#' @importFrom dplyr summarise bind_rows group_by %>% mutate sym tibble rename select left_join join_by everything
 #' @importFrom purrr map
 #' @importFrom stats cor rnorm sd setNames
 #' @examples

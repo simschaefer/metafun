@@ -204,6 +204,7 @@ sim <- sim_meta(min_obs = 200,
 head(sim)
 ```
 
+
 ### Run Meta-Analysis on simulated data
 
 ```{r fig.width=10, fig.height=5, message=FALSE}
