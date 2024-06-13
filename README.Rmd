@@ -96,7 +96,6 @@ metafor::forest(meta_fixed,
              prediction = TRUE, 
              print.tau2 = TRUE,
              leftlabs = c("Study", "g", "SE"))
-
 ```
 
 

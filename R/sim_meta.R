@@ -120,22 +120,22 @@ sim_meta <- function(min_obs = 100,
       r_mod_eff <- 0
     }
 
-    # mean Group 2
-    mean2 <- mean1 + smd_true*s_pooled + smd_mod_eff*s_pooled
+    # effect size calculation
+    effect <- smd_true*s_pooled + smd_mod_eff*s_pooled
 
     r <- r_true + r_mod_eff
 
     if(random & 'SMD' %in% random_effects){
-      study_mean1 <- rnorm(1, mean = mean1, sd = tau)
-      study_mean2 <- rnorm(1, mean = mean2, sd = tau)
+      study_mean1 <- mean1
+      study_mean2 <- study_mean1 + rnorm(1, mean = effect, sd = tau)
       r_study <- r
     }else if(random & 'ZCOR' %in% random_effects){
         r_study <- fisherz2r(rnorm(1, mean = r, sd = tau))
         study_mean1 <- mean1
-        study_mean2 <- mean2
+        study_mean2 <- mean1 + effect
     }else{
       study_mean1 <- mean1
-      study_mean2 <- mean2
+      study_mean2 <- mean1 + effect
       r_study <- r
     }
 
