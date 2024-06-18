@@ -329,7 +329,8 @@ bubble(m.gen.reg, studlab = TRUE)
 Simulate data
 ```{r}
 data <- sim_metareg(random = TRUE,
-                    tau = 0.05,
+                    tau = 0.1,
+                    n_studies = 50,
                     formula = y ~ 0.1*group + 0.05*quality + 0.2*control,
                     mod_types = c('cat', 'cont', 'cat'))
 
