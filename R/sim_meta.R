@@ -17,7 +17,7 @@
 #' @param aggregate return only aggregated data (TRUE) or raw data (FALSE).
 #' @param random_effects Choose if 'SMD' or 'ZCOR' should be include random effects
 #'
-#' @return list containing raw data (data_raw) and aggregated data with computed effects sizes and standard errors (data_aggr)
+#' @return data frame containing aggregated data (aggregate = TRUE) or raw data (aggregate = FALSE)
 #' @export
 #' @importFrom psych fisherz fisherz2r
 #' @importFrom metafor escalc

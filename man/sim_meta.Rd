@@ -57,7 +57,7 @@ sim_meta(
 \item{random_effects}{Choose if 'SMD' or 'ZCOR' should be include random effects}
 }
 \value{
-list containing raw data (data_raw) and aggregated data with computed effects sizes and standard errors (data_aggr)
+data frame containing aggregated data (aggregate = TRUE) or raw data (aggregate = FALSE)
 }
 \description{
 sim_meta

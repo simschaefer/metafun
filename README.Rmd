@@ -324,3 +324,26 @@ bubble(m.gen.reg, studlab = TRUE)
 
 ```
 
+# Multiple Metaregression
+
+Simulate data
+```{r}
+data <- sim_metareg(random = TRUE,
+                    tau = 0.05,
+                    formula = y ~ 0.1*group + 0.05*quality + 0.2*control,
+                    mod_types = c('cat', 'cont', 'cat'))
+
+head(data)
+
+```
+Conduct Meta-Analysis
+
+```{r}
+meta <- rma(yi = hedges_g,
+            sei = se,
+            data = data,
+            mods = ~ group + quality +control)
+
+summary(meta)
+```
+

@@ -15,4 +15,5 @@ Imports:
     metafor,
     psych,
     purrr,
+    stringr,
     tidyr
