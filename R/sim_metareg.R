@@ -1,4 +1,3 @@
-
 #' sim_metareg
 #'
 #' @param min_obs minimum number of observations per study
