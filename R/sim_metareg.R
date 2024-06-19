@@ -99,7 +99,10 @@ sim_metareg <- function(min_obs = 100,
 
   A_df <- A_df %>%
     rename(!!!setNames(old_names, new_names)) %>%
-    select(hedges_g, n, se, intercept, everything())
+    mutate(study = 1:nrow(A_df)) %>%
+    select(study, hedges_g, n, se, intercept, everything()) %>%
+    select(-m) %>%
+    tibble()
 
 
   return(A_df)
