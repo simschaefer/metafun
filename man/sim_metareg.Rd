@@ -10,6 +10,7 @@ sim_metareg(
   n_studies = 100,
   intercept = 0.5,
   random = FALSE,
+  effect_size = "ZCOR",
   tau = 0.01,
   formula,
   mod_types
@@ -25,6 +26,8 @@ sim_metareg(
 \item{intercept}{effect size (Hedges' g) without moderation effect}
 
 \item{random}{choose TRUE to add variability of true effect size}
+
+\item{effect_size}{choose effect size measure ('SMD' or 'ZCOR')}
 
 \item{tau}{standard deviation of true effect size}
 
