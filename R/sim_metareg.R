@@ -46,9 +46,9 @@ sim_metareg <- function(min_obs = 100,
   # formula = formula("y ~ 0.1*group + 0.05*quality + 0.2*control")
   # mod_types = c('cat', 'cont', 'cat')
   #
-
-  formula_parts = formula("y ~ 0.1*group + 0.05*quality + 0.2*control")
-  mod_types = c('cat', 'cont', 'cat')
+#
+#   formula_parts = formula("y ~ 0.1*group + 0.05*quality + 0.2*control")
+#   mod_types = c('cat', 'cont', 'cat')
 
   ### MODERATION EFFECTS ###
 
